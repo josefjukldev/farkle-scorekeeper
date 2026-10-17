@@ -1,6 +1,6 @@
-# Farkle Scorekeeper — Design Package
+# Dices with Friends — Design Package
 
-Handover package for building the **Farkle Scorekeeper** app with Claude Code.
+Handover package for building the **Dices with Friends** app (Farkle scorekeeper; repo name `farkle-scorekeeper`) with Claude Code.
 
 ## Reading order
 | # | File | Content |

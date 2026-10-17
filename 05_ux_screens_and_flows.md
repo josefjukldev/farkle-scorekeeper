@@ -43,7 +43,7 @@ End condition met / manual end ──► S8 Final Results ──► Archive ─�
 ### S1 Home
 ```
 ┌───────────────────────────┐
-│ Farkle Scorekeeper   ⚙    │
+│ Dices with Friends   ⚙    │
 │                           │
 │ ▶ Resume: "Friday night"  │  ← only if unfinished
 │   4 players · Round 3     │
@@ -81,7 +81,7 @@ Location         [x] Save location  (Altea) [edit label]
 ├───────────────────────────────┤
 │ Turn total        450         │  big
 │ Dice left: 3   [●●● ○○○]      │
-│ Bank needs 350 ✓              │
+│ Bank needs 350 ✓ · 2 dice ✓   │
 ├───────────────────────────────┤
 │ Steps: 100 · 50 · 300  (undo) │
 ├───────────────────────────────┤
@@ -95,7 +95,7 @@ Location         [x] Save location  (Altea) [edit label]
 │ [ BUST ]  [ ROLL AGAIN ] [BANK]│
 └───────────────────────────────┘
 ```
-Behaviour: tapping a quick pick adds a step immediately (with haptic tick); "Roll again" is only a visual confirmation that the player continues, and is enabled after at least one step; Bank is disabled/greyed with a hint if below minimum.
+Behaviour: tapping a quick pick adds a step immediately (with haptic tick); "Roll again" is only a visual confirmation that the player continues, and is enabled after at least one step; Bank is disabled/greyed with a hint if below the minimum or if the bank window is closed ("Bank needs 2 dice left or hot dice"). After hot dice the bar shows [BANK] and [THROW ALL 6].
 
 ### Dice picker (bottom sheet)
 Six rows (faces 1–6), each with `−  n  +` stepper and the live computed points; footer shows "Dice used 4/6 · +350", invalid selections show a red reason ("Die 2 does not score"), and an "Add" button.

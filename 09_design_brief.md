@@ -1,5 +1,7 @@
 # 09 — Design Brief
 
+App name: **Dices with Friends**. No logo yet; the design phase delivers a wordmark and app icon (see section 7).
+
 Input for the visual and interaction design phase. Behaviour is defined in `02`, `03` and `05`; this file fixes the visual language and what to design first.
 
 ## 1. Product feel
@@ -39,10 +41,11 @@ Empty, normal, minimum-not-reached (Bank disabled with "150 missing"), hot dice,
 Podium for top 3, ranking list up to 8, up to 3 awards, style icon per player, footer line. Two themes: follows app theme, and a fixed colourful one. No coordinates; place label only when toggled.
 
 ## 7. Deliverables of the design phase
-Token file (CSS variables), annotated mockups for the screens in section 3 in light and dark, component sheet with states, share-image template, copy deck cs/en for the visible strings (`05` section 9).
+Wordmark and app icon (192/512 + maskable) concepts, token file (CSS variables), annotated mockups for the screens in section 3 in light and dark, component sheet with states, share-image template, copy deck cs/en for the visible strings (`05` section 9).
 
-## 8. Open questions for the owner
-1. A4 "2 kostky end" on the paper note: what does it mean? (Currently an optional off-by-default rule.)
-2. Confirm the guessed values on the note: three 4s, three 5s, five and six 1s, n-of-a-kind doubling.
-3. App name and logo, and any preferred colour or mood.
-4. Hosting target (GitHub Pages, Netlify or Cloudflare Pages) and whether the app is public.
+## 8. Decisions and open questions
+Resolved by the owner: "2 kostky end" = bank allowed only with 2 dice left or after hot dice; n-of-a-kind = triple x (count − 2); name = Dices with Friends; host = GitHub (not public yet).
+Still open:
+1. Is banking with 1 die left allowed? (Default no; `atMostTwoOrHot` variant exists.)
+2. Preferred colour or mood for the brand and icon.
+3. Custom domain later? (Affects Vite `base`.)

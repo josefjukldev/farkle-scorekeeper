@@ -35,14 +35,14 @@ Each requirement has an ID used in tests (`08_test_plan_and_acceptance.md`).
 | FR-304 | Dice-face picker: user marks how many dice of each face (1–6) were set aside (stepper per face, total max = dice remaining). Engine computes the score and flags invalid selections (non-scoring dice present). Displays "dice used / dice remaining". | M |
 | FR-305 | Manual entry: numeric keypad, accepts multiples of 50 only (configurable), range 50–20 000 per step. Manual steps do not consume a known number of dice (user may optionally specify dice used for hot-dice tracking; default "unknown"). | M |
 | FR-306 | After adding a step, user chooses **Roll again** (stay in the turn, with the number of dice remaining shown) or **Bank**. | M |
-| FR-307 | **Bank** is enabled only when turn total ≥ required minimum (see rules engine). When disabled, show how many points are missing. | M |
+| FR-307 | **Bank** is enabled only when turn total ≥ required minimum **and** the bank window is open (FR-314). When disabled, show the reason: points missing or dice rule. | M |
 | FR-308 | **Bust (Farkle)** button is always available. It sets the turn result to 0, applies configured penalties, and passes to the next player after one confirmation tap. | M |
 | FR-309 | **Hot dice**: when the dice used reach 6 (known via quick pick or dice-face picker), show a "Hot dice – take all 6 dice" banner and reset dice remaining to 6; the turn continues. For manual steps the user can press "Hot dice" manually. | M |
 | FR-310 | **Undo** removes the last step of the current turn (or reverts the last bank/bust of the previous player if the current turn is empty, within the same session). Unlimited depth within the current game. | M |
 | FR-311 | Before passing to the next player, show a confirmation summary: "Pavel banks 450 → 2 350. Next: Jana". One tap to confirm, one tap to go back. | M |
 | FR-312 | Next-player screen starts with a clear hand-over state: large next player name, current score, "Start turn" button (prevents accidental taps). | M |
 | FR-313 | Past turns of the current game can be edited from the Scoreboard / History tab (change turn total or result). Edits recompute all totals and are flagged "edited" in the log. | S |
-| FR-314 | Optional "two dice rule": when enabled and dice remaining equals 2 after a step, the app prompts forcing a bank (see rules engine). | S |
+| FR-314 | Bank window (`bankRestriction`): when active, Bank is enabled only with exactly 2 dice left or in hot-dice state, and a hint says so ("Bank possible with 2 dice left or after hot dice"). Roll again is always available. | M |
 
 ## 4. Live scoreboard
 | ID | Requirement | Pri |

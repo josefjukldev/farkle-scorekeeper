@@ -48,4 +48,5 @@ Status legend: [ ] todo, [x] done. Acceptance items mirror `08_test_plan_and_acc
 ## Decisions and assumptions log
 - Classic preset: min bank 300 every turn, straight 1500 (spec cleanup).
 - `nOfKindMode = off`: extra dice beyond three score as singles for faces 1 and 5 only.
+- Owner answers: bank window rule (`bankRestriction`), n-of-a-kind linear multiplier, name "Dices with Friends", GitHub Pages first.
 - Added `manualMax` to RuleSet; added `Preset` type; defined review metrics precisely.

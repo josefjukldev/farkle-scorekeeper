@@ -67,7 +67,7 @@ Friendly, light, never insulting. Max 2 sentences per player. Czech and English 
 
 ## 6. Share image
 - Generated client-side from an off-screen DOM node (`html-to-image`) or `<canvas>`; PNG, 1080 x 1350 px (4:5) plus optional 1080 x 1920 story format.
-- Contents: app name/logo, game name, date (and place label if the user switches it on), podium of top 3 with names and scores, full ranking list (up to 8 players), up to 3 awards, each player's style label with icon, small footer "Made with Farkle Scorekeeper".
+- Contents: app name/logo, game name, date (and place label if the user switches it on), podium of top 3 with names and scores, full ranking list (up to 8 players), up to 3 awards, each player's style label with icon, small footer "Made with Dices with Friends".
 - Theme: follows the app theme, with a "colourful" fixed theme option for social media.
 - Share flow: `navigator.canShare({ files })` → `navigator.share({ files, title, text })`; fallback "Download PNG" and "Copy image" (Clipboard API).
 - Images are generated on demand and not stored (only the review data is stored), so layout upgrades apply to old games.
