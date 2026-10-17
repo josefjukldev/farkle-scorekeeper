@@ -26,7 +26,7 @@ Source: handwritten note. Cells marked (*) were not legible or not on the note a
 | Minimum to bank | 350 |
 
 ### Preset "Classic Farkle" (alternative)
-Single 1 = 100, single 5 = 50, triples = face x 100 (triple 1 = 1000), four/five/six of a kind = x2/x4/x8 of the triple, straight = 1500, minimum to bank = 500 on first entry, 350 afterwards... **No**: for simplicity ship "Classic" with minimum to bank = 300 on every turn, straight = 1500, hot dice on. Users can edit any value.
+Single 1 = 100, single 5 = 50, triples = face x 100 (triple 1 = 1000), four/five/six of a kind = triple x 2 / x 4 / x 8 (`nOfKindMode = 'double'`), straight = 1500, minimum to bank = 300 on every turn (`firstEntryMin = null`), hot dice on, final round `oneMoreTurnEach`. Users can edit any value.
 
 ### Preset "Custom"
 Copy of the last used preset, fully editable.
@@ -52,6 +52,7 @@ export interface RuleSet {
   finalRound: 'equalTurns' | 'oneMoreTurnEach' | 'none'; // default 'oneMoreTurnEach'
   timeFinish: 'finishTurn' | 'immediate'; // default 'finishTurn'
   allowManualMultiplesOf: number; // 50
+  manualMax: number;              // 20000, upper bound of one manual step
 }
 ```
 `endMode`, `targetScore` and time limit are set per game at creation but stored in the game's snapshot.
@@ -65,10 +66,11 @@ A selection is **valid** only if every die in it contributes to points (no dead 
    - c >= 3: triple value `tripleBase[f]`; for c = 4, 5, 6 apply `nOfKindMode`:
      - `double`: value = triple x 2^(c-3)
      - `table`: value from `nOfKindTable`
-     - `off`: only the triple counts and extra dice are treated as singles (valid only for faces 1 and 5, otherwise invalid)
+     - `off`: only the triple counts; each extra die beyond three is scored as a single (`single1` / `single5`). For faces 2, 3, 4 and 6 any count above 3 is invalid (dead dice). Examples: `1:4` = 1000 + 100 = 1100; `5:4` = 500 + 50 = 550; `4:4` = invalid.
    - c < 3: only faces 1 and 5 score: `c x single1` or `c x single5`; other faces with c < 3 are invalid (dead dice).
 3. points = sum over faces; diceUsed = total dice in the selection.
-4. Selections of four or more of a kind for face 1/5 follow rule 2 (not mixed with singles).
+4. Each face is evaluated on its own count; there is no mixing across faces beyond summing (e.g. `1:4, 5:2` in `double` mode = 2000 + 100 = 2100).
+5. A step is one *set-aside*. Two triples of the same face in one throw are impossible; a selection is always a single throw's scoring dice.
 
 ### Pseudocode
 ```ts
@@ -118,6 +120,7 @@ Rules:
 - `BANK` is rejected by the engine if `!canBank`.
 - `BUST`: turn total = 0. Increment `consecutiveBusts`. If `bustPenalty` is set and `consecutiveBusts` equals `afterConsecutive`, subtract `points` from the banked score (not below 0) and reset the counter. A successful bank resets the counter.
 - `twoDiceRule = forceBankAtTwo`: after a step, if `diceRemaining === 2` and `canBank`, the UI must offer only Bank (Roll again hidden); if `!canBank` Roll again remains allowed. (Assumption A4; off by default.)
+- Hot dice and minimum: hot dice does not bypass the minimum; the player may keep rolling after hot dice. `consecutiveBusts` is tracked per player.
 - `UNDO`: pops the last step and restores diceRemaining; engine stores the previous state in a stack.
 
 ## 6. Game state machine
@@ -131,7 +134,9 @@ Game state: `{ status, currentPlayerIndex, roundNumber, scores[playerId], turns[
 - When a BANK causes `score >= targetScore`:
   - `finalRound = 'none'` → game finishes immediately.
   - `'oneMoreTurnEach'` → every other player takes exactly one more turn after the triggering player, in order; then the game finishes.
-  - `'equalTurns'` → players who have fewer turns than the triggering player take turns until everyone has equal turns (important when the trigger is not the last seat in the round).
+  - `'equalTurns'` → players who have fewer turns than the triggering player take turns until everyone has equal turns (so every seat finishes the same round; if the trigger is the last seat, the game finishes immediately).
+  - Difference: with `oneMoreTurnEach` every other player plays exactly one turn after the trigger, in seat order (seats after the trigger finish the current round; seats before it play one extra turn). With `equalTurns` only the seats after the trigger play, so everyone ends with the same number of turns.
+  - Double trigger: if another player reaches the target during the final round, nothing changes (the final round list is not extended, no one gets additional turns). Only the first trigger is recorded in `finalRoundTriggeredBy`.
 - During the final round, any player may exceed the leader; ranking uses final banked scores.
 - Busting during the final round simply scores 0 for that turn.
 
@@ -144,9 +149,9 @@ Game state: `{ status, currentPlayerIndex, roundNumber, scores[playerId], turns[
 Sort by score descending. Equal scores share a rank (1, 1, 3). Secondary info shown, not used for rank: fewer turns, fewer busts, best turn.
 
 ## 7. Validation
-- Manual step: integer, multiple of `allowManualMultiplesOf`, between 50 and 20 000.
+- Manual step: integer, multiple of `allowManualMultiplesOf`, between `allowManualMultiplesOf` and `manualMax` (defaults 50 and 20 000).
 - Quick-pick step values are always derived from the active RuleSet and must pass `scoreSelection`.
-- RuleSet validation: all values non-negative integers (multiples of 50), `minBank` between 0 and 2 000, `targetScore` ≥ 1 000 and ≥ `minBank`, time limit 1–240 min.
+- RuleSet validation: all values non-negative integers (multiples of 50), `minBank` between 0 and 2 000, `targetScore` ≥ 1 000 and ≥ `minBank`, `manualMax` ≥ `allowManualMultiplesOf`, `bustPenalty.afterConsecutive` ≥ 2, time limit 1–240 min.
 
 ## 8. Quick-pick catalogue (generated from RuleSet)
 Order on screen (primary row first): `1`, `5`, `1+5`, `2×1`, `2×5`, `3×2`, `3×3`, `3×4`, `3×5`, `3×6`, `3×1`, `4×1`, `Straight`, `Other…` (opens picker or manual). Each quick pick carries its `counts` so diceUsed is known. A counter modifier "x2/x3" lets the user add the same quick pick repeatedly (for example two separate singles of 5 is handled by tapping `5` twice).
@@ -169,6 +174,11 @@ Order on screen (primary row first): `1`, `5`, `1+5`, `2×1`, `2×5`, `3×2`, `3
 | 13 | 5:3 (mode off, 3 fives) | 500 | 3 | yes |
 | 14 | 1:6 (mode double) | 8000 | 6 | yes |
 | 15 | 0 dice | — | — | no |
+| 16 | 1:4 (mode off) | 1100 | 4 | yes |
+| 17 | 4:4 (mode off) | — | — | no (dead die 4) |
+| 18 | 1:4, 5:2 (mode double) | 2100 | 6 | yes |
+| 19 | 2:6 (mode double) | 1600 | 6 | yes |
+| 20 | 7 dice total | — | — | no (too many) |
 
 Turn examples:
 - Steps 100 → 50 → 200 = 350 → Bank allowed (min 350) → score += 350.

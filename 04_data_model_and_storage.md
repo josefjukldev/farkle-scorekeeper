@@ -103,6 +103,15 @@ export interface GameReview {        // see 06
   stats: Record<Id, PlayerStats>;
 }
 
+export interface Preset {            // stored in the `presets` table
+  id: Id;
+  name: string;
+  builtIn: boolean;                  // "House rules (note)" and "Classic Farkle" are built in and read-only
+  rules: RuleSet;                    // endMode/targetScore are defaults, overridden per game
+  createdAt: number;
+  updatedAt: number;
+}
+
 export interface Settings {
   id: 'singleton';
   language: 'cs' | 'en';

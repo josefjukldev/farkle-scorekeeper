@@ -14,6 +14,8 @@ Handover package for building the **Farkle Scorekeeper** app with Claude Code.
 | 6 | `06_review_and_style_analytics.md` | Game review, player style assessment algorithm, share image |
 | 7 | `07_architecture_and_tech.md` | Stack, folder structure, PWA, i18n, build and deploy |
 | 8 | `08_test_plan_and_acceptance.md` | Unit, component, E2E tests, acceptance checklist, delivery milestones |
+| 9 | `09_design_brief.md` | Visual language, design tokens, screen priorities, open questions |
+| – | `docs/progress.md` | Milestone and acceptance tracking |
 
 ## One-paragraph summary
 A mobile-first, offline-capable web app (PWA) that replaces the paper scoresheet for the six-dice game Farkle (Czech: *Kostky*). Dice are physical; the app only records and calculates. The host creates a game (name, players, end condition: target points or countdown timer), players take turns entering the result of their throws through quick-pick buttons, a dice-face picker or manual entry, the app enforces Farkle logic (minimum to bank, bust, hot dice), ranks players when the game ends, and offers to **forget** the game or **archive** it. Archived games get an auto-generated review, a playing-style label per player, and a shareable image dashboard. Everything is stored locally on the device and survives restarts.

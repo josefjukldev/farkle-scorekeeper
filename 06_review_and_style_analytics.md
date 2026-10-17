@@ -25,6 +25,15 @@ Computed from turns:
 
 `lostToBusts` is the sum of the unbanked totals at the time of the bust (known because steps are recorded before the bust).
 
+### Precise definitions
+- `turns` includes banked, bust and discarded turns; discarded turns (time-mode `immediate`) are excluded from all rates.
+- `bankAtMinRate` = banked turns with `turnTotal < minBank + 150` divided by banked turns (0 if none).
+- `stdDev` = population standard deviation of banked turn totals (needs ≥ 3 banked turns, otherwise the Tortoise rule does not apply).
+- `comeback` = max over all turn boundaries of `(leaderScore - playerScore)` at the moment that deficit was largest, counted only if the player ended the game with `rank` 1 or finished the game within 500 points of the leader; otherwise 0.
+- `leadChanges` = number of times the player moved from not leading to strictly leading after a turn (ties are not a lead).
+- "Top half" = `rank <= ceil(players / 2)`.
+- Gambler percentage rule: `lostToBusts / (sum of banked totals + lostToBusts) >= 0.35`.
+
 ## 2. Style classification
 Each player receives **one primary style** (and optionally a secondary tag). Evaluate in the order below; first match wins. Thresholds are constants in `src/review/thresholds.ts`. Minimum 4 turns required, otherwise "Newcomer" (not enough data).
 
