@@ -14,7 +14,7 @@ Status legend: [ ] todo, [x] done. Acceptance items mirror `08_test_plan_and_acc
 ## Design phase
 - [x] Spec review and consistency fixes (branch `docs/spec-fixes`)
 - [x] Design brief (`09_design_brief.md`)
-- [ ] Design direction approved (open questions in brief section 8)
+- [x] Design direction approved (brief section 8)
 - [ ] High-fidelity mockups: S4, S5, S6, S8
 - [ ] Remaining screens and component sheet
 
@@ -49,4 +49,5 @@ Status legend: [ ] todo, [x] done. Acceptance items mirror `08_test_plan_and_acc
 - Classic preset: min bank 300 every turn, straight 1500 (spec cleanup).
 - `nOfKindMode = off`: extra dice beyond three score as singles for faces 1 and 5 only.
 - Owner answers: bank window rule (`bankRestriction`), n-of-a-kind linear multiplier, name "Dices with Friends", GitHub Pages first.
+- Bank window default is `atMostTwoOrHot` (1 die left may bank). Brand: blue primary. No custom domain for now.
 - Added `manualMax` to RuleSet; added `Preset` type; defined review metrics precisely.

@@ -7,18 +7,23 @@ Input for the visual and interaction design phase. Behaviour is defined in `02`,
 ## 1. Product feel
 Friendly tabletop companion: warm, a little playful, but dead clear. Used one-handed, in a dim pub, passed between people. Numbers are the hero.
 
-## 2. Design tokens (proposal)
+## 2. Brand and design tokens
+Brand direction (owner): **primary blue, secondary gray, light gray and/or white backgrounds, text black or white depending on the background**. Clean and calm; the blue carries all primary actions.
+
 | Token | Light | Dark |
 |-------|-------|------|
-| Background | #FBF7F0 (paper) | #14171C |
+| Background | #F2F4F7 (light gray) | #14171C |
 | Surface | #FFFFFF | #1E232B |
-| Text | #1B1F24 | #F2F4F7 |
-| Accent / primary action (Bank) | #1F8A5B | #3DBE87 |
+| Text on background/surface | #111418 (black) | #FFFFFF |
+| Primary (Bank, main buttons) | #1D5FD6 (text on it: white) | #5B9BFF (text on it: black) |
+| Secondary (quiet buttons, chips) | #6B7480 gray | #9AA3AF |
 | Danger (Bust) | #C8372D | #FF6B5E |
 | Warning (timer < 5 min) | #B7791F | #F2B84B |
 | Hot dice highlight | #E8A317 | #FFC94D |
 
-Player palette (8, colour-blind safe, each paired with an initial and a shape): blue, orange, teal, magenta, yellow, violet, red-brown, grey.
+Check all pairs for WCAG AA (4.5:1 text, 3:1 UI). Danger and warning stay outside the brand palette on purpose so Bust and time pressure are never confused with Bank.
+
+Player palette (8, colour-blind safe, each paired with an initial and a shape): orange, teal, magenta, yellow, violet, red-brown, sky, olive. Avoid the brand blue so player colours never read as buttons.
 - Typography: system UI stack for the app; tabular numerals for all scores. Scale: score 56/40, player name 32, body 16, caption 13. Czech needs the longer strings tested (e.g. "Všechny kostky bodují").
 - Spacing 4 px grid; radius 16 for cards and sheets, 12 for buttons; touch target at least 48 px, primary actions 64 px tall.
 - Motion: 150 ms ease for sheets, a number count-up on bank, none when `prefers-reduced-motion`.
@@ -43,9 +48,6 @@ Podium for top 3, ranking list up to 8, up to 3 awards, style icon per player, f
 ## 7. Deliverables of the design phase
 Wordmark and app icon (192/512 + maskable) concepts, token file (CSS variables), annotated mockups for the screens in section 3 in light and dark, component sheet with states, share-image template, copy deck cs/en for the visible strings (`05` section 9).
 
-## 8. Decisions and open questions
-Resolved by the owner: "2 kostky end" = bank allowed only with 2 dice left or after hot dice; n-of-a-kind = triple x (count − 2); name = Dices with Friends; host = GitHub (not public yet).
-Still open:
-1. Is banking with 1 die left allowed? (Default no; `atMostTwoOrHot` variant exists.)
-2. Preferred colour or mood for the brand and icon.
-3. Custom domain later? (Affects Vite `base`.)
+## 8. Decisions
+Resolved by the owner: "2 kostky end" = bank allowed with 2 or fewer dice left (including 1) or after hot dice; n-of-a-kind = triple x (count − 2); name = Dices with Friends; host = GitHub (not public yet); brand = blue primary, gray secondary, light gray/white background, black or white text; no custom domain for now.
+No open questions remain for the design phase.

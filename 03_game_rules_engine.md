@@ -45,7 +45,7 @@ export interface RuleSet {
   minBank: number;                // 350
   firstEntryMin: number | null;   // null = same as minBank
   hotDice: boolean;               // true
-  bankRestriction: 'anytime' | 'exactlyTwoOrHot' | 'atMostTwoOrHot'; // house default 'exactlyTwoOrHot'
+  bankRestriction: 'anytime' | 'exactlyTwoOrHot' | 'atMostTwoOrHot'; // house default 'atMostTwoOrHot'
   bustPenalty: { afterConsecutive: number; points: number } | null; // null
   endMode: 'target' | 'time';
   targetScore: number;            // used if target
@@ -121,7 +121,7 @@ Rules:
 - `requiredMin = firstEntryMin ?? minBank` if the player's banked score is 0 and `firstEntryMin` set, else `minBank`.
 - `BANK` is rejected by the engine if `!canBank`.
 - `BUST`: turn total = 0. Increment `consecutiveBusts`. If `bustPenalty` is set and `consecutiveBusts` equals `afterConsecutive`, subtract `points` from the banked score (not below 0) and reset the counter. A successful bank resets the counter.
-- `bankRestriction` (note rule "2 kostky end"): a player cannot bank mid-turn with 3+ dice left. Roll again is always allowed; a throw with no scoring dice is a bust. After hot dice (all six scored) the player chooses: bank, or throw all 6 again. `hotDicePending` clears when the next step is added.
+- `bankRestriction` (note rule "2 kostky end"): a player cannot bank mid-turn with 3 or more dice left (2, 1 or hot dice is fine). Roll again is always allowed; a throw with no scoring dice is a bust. After hot dice (all six scored) the player chooses: bank, or throw all 6 again. `hotDicePending` clears when the next step is added.
 - Hot dice and minimum: hot dice does not bypass the minimum; the player may keep rolling after hot dice. `consecutiveBusts` is tracked per player.
 - `UNDO`: pops the last step and restores diceRemaining; engine stores the previous state in a stack.
 
@@ -184,9 +184,10 @@ Order on screen (primary row first): `1`, `5`, `1+5`, `2×1`, `2×5`, `3×2`, `3
 | 19 | 2:6 (mode multiplier) | 800 | 6 | yes |
 | 20 | 7 dice total | — | — | no (too many) |
 
-Turn examples (House rules: min 350, `exactlyTwoOrHot`):
+Turn examples (House rules: min 350, `atMostTwoOrHot`):
 - Steps 3×4 (400, 3 dice) → 1 (100, 1 die) = 500, 2 dice left → Bank allowed → score += 500.
-- Steps 1 (100) → 5 (50) → 3×2 (200) = 350, but 1 die left → Bank blocked ("Bank needs 2 dice left or hot dice"); Roll again allowed.
+- Steps 1 (100) → 5 (50) → 3×2 (200) = 350, 1 die left → Bank allowed.
+- Steps 3×4 (400, 3 dice) = 400, 3 dice left → Bank blocked ("Bank needs 2 or fewer dice left, or hot dice"); Roll again allowed.
 - Steps 3×2 (200) → 1 (100) = 300, 2 dice left → Bank blocked ("50 missing").
 - Steps 3×1 (1000, 3 dice), 3×5 (500, 3 dice) → hot dice banner, dice remaining = 6, turn total 1500 → choose Bank or throw all 6 again.
 - Bust after steps totalling 600 → turn total 0, score unchanged.

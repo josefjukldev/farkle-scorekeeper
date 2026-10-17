@@ -47,7 +47,7 @@ Players currently note scores on a piece of cardboard: per-throw tallies, a mini
 | A1 | Straight 1-2-3-4-5-6 value | 1000 (per note) | Yes |
 | A2 | Four of a kind | **Confirmed by owner:** triple value x 2 (4x2 = 3x2 x 2 = 400) | Yes (multiplier / doubling / table / off) |
 | A3 | Five and six of a kind | **Confirmed:** linear multiplier, triple x 3 for five, x 4 for six (5x2 = 600). Classic preset uses doubling instead | Yes |
-| A4 | "2 kostky end" on the note | **Confirmed meaning:** a player may end the turn (bank) only when exactly 2 unscored dice are left, or after hot dice (all 6 scored). They may always keep throwing instead; a throw with no score is a bust. Default **on** in House rules, **off** in Classic. See `bankRestriction` in `03`. Open: is banking with 1 die left allowed? Default no, variant `atMostTwoOrHot` | Yes |
+| A4 | "2 kostky end" on the note | **Confirmed meaning:** a player may end the turn (bank) only when 2 or fewer unscored dice are left (owner confirmed: 1 die left also allows banking), or after hot dice (all 6 scored). They may always keep throwing instead; a throw with no score is a bust. Default **on** in House rules, **off** in Classic. See `bankRestriction` in `03`. Default `atMostTwoOrHot`; stricter variant `exactlyTwoOrHot` | Yes |
 | A5 | Minimum to bank | 350 every turn | Yes (plus optional higher first-entry minimum, default off) |
 | A6 | Target-mode finish | Triggering player ends their turn, everyone else gets one final turn, highest total wins | Yes (final round on/off) |
 | A7 | Time-mode finish | When the countdown reaches zero the current turn may be completed, then the game ends | Yes (finish current turn / stop immediately) |

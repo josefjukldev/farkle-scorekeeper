@@ -8,7 +8,7 @@ Test pyramid: many fast unit tests of the engine, component tests of key screens
 |------|-------|
 | `scoreSelection` | All 15 examples in `03` section 9; every triple and every n-of-a-kind mode; straight on/off; invalid selections; edge counts (0 and more than 6 dice) |
 | Quick picks | Generated values equal `scoreSelection` for every pick under each preset |
-| Turn machine | Add steps; bank allowed/blocked at 349/350; first-entry minimum; bust; hot dice; manual step with unknown dice; `bankRestriction` all three modes (bank blocked at 3 dice left, allowed at 2, allowed after hot dice); undo across steps; consecutive-bust penalty |
+| Turn machine | Add steps; bank allowed/blocked at 349/350; first-entry minimum; bust; hot dice; manual step with unknown dice; `bankRestriction` all three modes (`atMostTwoOrHot`: blocked at 3 dice left, allowed at 2 and 1, allowed after hot dice; `exactlyTwoOrHot`: blocked at 1); undo across steps; consecutive-bust penalty |
 | Game machine | Target reached by the last seat / middle seat; `none`, `oneMoreTurnEach`, `equalTurns`; double-trigger during final round; manual end; time mode with `finishTurn` / `immediate`; pause/resume timer |
 | Ranking | Distinct scores; ties (1,1,3); all-zero scores |
 | Validation | RuleSet bounds; manual value multiples of 50; name uniqueness |

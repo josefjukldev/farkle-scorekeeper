@@ -42,7 +42,7 @@ Each requirement has an ID used in tests (`08_test_plan_and_acceptance.md`).
 | FR-311 | Before passing to the next player, show a confirmation summary: "Pavel banks 450 → 2 350. Next: Jana". One tap to confirm, one tap to go back. | M |
 | FR-312 | Next-player screen starts with a clear hand-over state: large next player name, current score, "Start turn" button (prevents accidental taps). | M |
 | FR-313 | Past turns of the current game can be edited from the Scoreboard / History tab (change turn total or result). Edits recompute all totals and are flagged "edited" in the log. | S |
-| FR-314 | Bank window (`bankRestriction`): when active, Bank is enabled only with exactly 2 dice left or in hot-dice state, and a hint says so ("Bank possible with 2 dice left or after hot dice"). Roll again is always available. | M |
+| FR-314 | Bank window (`bankRestriction`): when active, Bank is enabled only with 2 or fewer dice left or in hot-dice state, and a hint says so ("Bank needs 2 or fewer dice left, or hot dice"). Roll again is always available. | M |
 
 ## 4. Live scoreboard
 | ID | Requirement | Pri |
