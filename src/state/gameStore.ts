@@ -40,6 +40,7 @@ interface GameStore {
   init: () => Promise<void>;
   clearError: () => void;
   createGame: (input: NewGameInput) => Promise<void>;
+  attachLocation: (gameId: string, location: NonNullable<Game['location']>) => Promise<void>;
   startTurn: () => Promise<void>;
   addStep: (s: StepInput) => Promise<boolean>;
   undoStep: () => Promise<void>;
@@ -137,6 +138,12 @@ export const useGame = create<GameStore>((set, get) => {
       for (const p of players) await repo.upsertPlayer({ id: p.playerId, name: p.name, colour: p.colour, lastUsedAt: now });
       await useSettings.getState().update({ lastEndCondition: input.end, lastPlayerIds: players.map((p) => p.playerId), defaultPresetId: input.rules.id });
       set({ game, turns: [], error: undefined });
+    },
+
+    attachLocation: async (gameId, location) => {
+      const g = get().game;
+      if (!g || g.id !== gameId) return;
+      await commit({ ...g, location });
     },
 
     startTurn: async () => {
