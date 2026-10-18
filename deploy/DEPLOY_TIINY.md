@@ -1,6 +1,6 @@
 # Deploy Dices with Friends on tiiny.host
 
-You need only the file `dices-with-friends-static.zip` (about 0.5 MB). It is a ready production build. No Node.js or terminal is needed.
+You need only the file `dices-with-friends-static.zip` (about 160 KB). It is a ready production build. No Node.js or terminal is needed.
 
 ## 1. Upload
 1. Open https://tiiny.host and choose to upload a file or folder (a zip is fine).

@@ -1,19 +1,30 @@
-import { z } from 'zod';
 import { db } from './db';
 import type { Game, Player, Preset, Turn } from './types';
 
 export const SCHEMA_VERSION = 1;
 
-const looseRecord = z.object({ id: z.string() }).passthrough();
-const BackupSchema = z.object({
-  app: z.literal('farkle-scorekeeper'),
-  schemaVersion: z.number().int().min(1).max(SCHEMA_VERSION),
-  exportedAt: z.number(),
-  games: z.array(z.unknown()),
-  turns: z.array(z.unknown()),
-  players: z.array(z.unknown()),
-  presets: z.array(z.unknown())
-});
+interface Backup {
+  app: 'farkle-scorekeeper';
+  schemaVersion: number;
+  exportedAt: number;
+  games: unknown[];
+  turns: unknown[];
+  players: unknown[];
+  presets: unknown[];
+}
+
+/** Structural check of a backup file (kept dependency-free to keep the app small). */
+function parseBackup(json: unknown): Backup | undefined {
+  if (typeof json !== 'object' || json === null) return undefined;
+  const b = json as Record<string, unknown>;
+  const v = b.schemaVersion;
+  const ok =
+    b.app === 'farkle-scorekeeper' &&
+    typeof v === 'number' && Number.isInteger(v) && v >= 1 && v <= SCHEMA_VERSION &&
+    typeof b.exportedAt === 'number' &&
+    [b.games, b.turns, b.players, b.presets].every(Array.isArray);
+  return ok ? (b as unknown as Backup) : undefined;
+}
 
 export interface ImportReport {
   ok: boolean;
@@ -60,9 +71,8 @@ export async function importAll(text: string, commit: boolean): Promise<ImportRe
   } catch {
     return emptyReport('not-json');
   }
-  const parsed = BackupSchema.safeParse(json);
-  if (!parsed.success) return emptyReport('bad-format');
-  const b = parsed.data;
+  const b = parseBackup(json);
+  if (!b) return emptyReport('bad-format');
   const report = emptyReport();
   const existingGames = new Set((await db.games.toCollection().primaryKeys()) as string[]);
   const existingPlayers = new Set((await db.players.toCollection().primaryKeys()) as string[]);
@@ -70,9 +80,8 @@ export async function importAll(text: string, commit: boolean): Promise<ImportRe
 
   const goodGames: Game[] = [];
   for (const g of b.games) {
-    const p = looseRecord.safeParse(g);
     const game = g as Game;
-    if (!p.success || !Array.isArray(game.players) || !game.rules || !game.endCondition || game.status !== 'archived') {
+    if (typeof game?.id !== 'string' || !Array.isArray(game.players) || !game.rules || !game.endCondition || game.status !== 'archived') {
       report.invalidGames++;
     } else if (existingGames.has(game.id)) {
       report.existingGames++;
