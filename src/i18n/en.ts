@@ -1,0 +1,108 @@
+export const en: Record<string, string> = {
+  'common.back': 'Back', 'common.cancel': 'Cancel', 'common.close': 'Close', 'common.save': 'Save',
+  'nav.main': 'Main', 'nav.home': 'Home', 'nav.archive': 'Archive', 'nav.settings': 'Settings',
+
+  'home.inProgress': 'Game in progress', 'home.finishedPending': 'Game finished', 'home.resume': 'Resume game', 'home.seeResults': 'See results',
+  'home.discard': 'Discard game', 'home.newGame': 'New game', 'home.recent': 'Recent games', 'home.seeAll': 'See all', 'home.winner': 'Winner',
+  'home.playersRound': '{n} {n:player|players} · Round {r}', 'home.nPlayers': '{n} {n:player|players}',
+  'home.replaceTitle': 'Replace the current game?', 'home.replaceBody': 'A game is still in progress. Starting a new one deletes it for good.', 'home.replaceConfirm': 'Delete it and start new',
+  'home.discardTitle': 'Discard this game?', 'home.discardBody': 'All turns of this game are deleted. This cannot be undone.', 'home.discardConfirm': 'Discard game',
+
+  'new.title': 'New game', 'new.name': 'Game name', 'new.errName': 'Enter a name of 1 to 60 characters.',
+  'new.players': 'Players ({n})', 'new.shuffle': 'Shuffle order', 'new.playerN': 'Player {n} name', 'new.up': 'Move player {n} up', 'new.down': 'Move player {n} down', 'new.remove': 'Remove player {n}',
+  'new.add': 'Add player', 'new.errLength': 'Name must be 1 to 24 characters.', 'new.errDuplicate': 'Another player already has this name.', 'new.errCount': 'You need 2 to 8 players.',
+  'new.ends': 'Game ends', 'new.target': 'Target score', 'new.time': 'Time limit', 'new.custom': 'Custom', 'new.customTarget': 'Target points (a multiple of 50, at least 1 000)', 'new.customTime': 'Minutes (1 to 240)',
+  'new.errTarget': 'Use a multiple of 50, at least 1 000 and not below the minimum to bank.', 'new.errTime': 'Use 1 to 240 minutes.',
+  'new.noteTarget': 'Everyone else gets one last turn after a player reaches {n}.', 'new.noteTime': 'The current turn can be finished when the {n} minutes run out.',
+  'new.rules': 'Rules', 'new.edit': 'Edit', 'new.rulesSummary': 'Min {min} to bank · bank {dice} · hot dice',
+  'new.dice.anytime': 'at any time', 'new.dice.atMostTwoOrHot': 'with 2 or fewer dice left', 'new.dice.exactlyTwoOrHot': 'with exactly 2 dice left',
+  'new.place': 'Place', 'new.saveLocation': 'Save location', 'new.locationNote': 'Stays on this device. Never added to shared images.', 'new.placeLabel': 'Place name (optional)', 'new.start': 'Start game',
+
+  'rules.title': 'Rules', 'rules.valid': 'All values are valid', 'rules.invalid': 'Check these values: {fields}', 'rules.presetBase': 'Start from', 'rules.custom': 'Custom',
+  'rules.scoring': 'Scoring', 'rules.single': 'Single {f}', 'rules.triple': 'Three {f}s', 'rules.ofKind': 'Four, five or six of a kind',
+  'rules.multiplier': 'Multiplier', 'rules.doubling': 'Doubling', 'rules.table': 'Table', 'rules.off': 'Off', 'rules.example': 'Live example, face 2',
+  'rules.tableNote': 'Per-face table is not editable in this prototype', 'rules.notScored': '4+ not scored',
+  'rules.special': 'Special rolls', 'rules.hotDice': 'Hot dice', 'rules.hotDiceNote': 'All six score: roll all six again', 'rules.straightOn': 'Straight 1–6 scores', 'rules.straightNote': 'One of each face, all six dice', 'rules.straight': 'Straight',
+  'rules.banking': 'Banking', 'rules.minBank': 'Minimum to bank', 'rules.firstEntry': 'First-entry minimum', 'rules.offShort': 'Off',
+  'rules.penalty': 'Bust penalty', 'rules.penaltyNote': 'Lose points after 3 busts in a row', 'rules.penaltyPoints': 'Penalty points',
+  'rules.bankDice': 'Dice rule for banking', 'rules.bankAny': 'Any time', 'rules.bankAtMost2': '2 or fewer dice', 'rules.bankExact2': 'Exactly 2 dice',
+  'rules.ends': 'When the game ends', 'rules.finalRound': 'After someone reaches the target', 'rules.oneMore': 'One more turn each', 'rules.equal': 'Equal turns', 'rules.endNow': 'End at once',
+  'rules.timeFinish': 'When the time runs out', 'rules.finishTurn': 'Finish the turn', 'rules.immediate': 'Stop at once',
+  'rules.use': 'Use for this game', 'rules.presetName': 'Preset name', 'rules.save': 'Save as new preset',
+
+  'hand.next': 'Next player', 'hand.toGo': '{n} to go', 'hand.needs': 'Needs {n} to bank', 'hand.start': 'Start turn', 'hand.pass': 'Pass the phone to {name} first.',
+  'hand.banked': '{name} banked +{n}', 'hand.busted': '{name} busted', 'hand.discarded': '{name}’s turn was discarded', 'hand.undoLast': 'Undo last turn',
+
+  'turn.round': 'Round {n}', 'turn.menu': 'Game menu', 'turn.score': 'Score', 'turn.toTarget': 'to target {n}', 'turn.total': 'Turn total', 'turn.diceLeft': 'Dice left: {n}',
+  'turn.aria': '{name}, turn total {total}, {dice} dice left', 'turn.hot': 'Hot dice – take all 6 dice', 'turn.chipMin': 'Min {n}',
+  'turn.chipDice.atMostTwoOrHot': '2 or fewer dice', 'turn.chipDice.exactlyTwoOrHot': 'Exactly 2 dice',
+  'turn.hintStart': 'Start by adding what you set aside.', 'turn.missing': '{n} points missing to bank.', 'turn.diceRule': 'Bank needs 2 or fewer dice left, or hot dice.',
+  'turn.hintHot': 'Bank now, or throw all 6 dice again.', 'turn.hintReady': 'Ready to bank, or roll again.', 'turn.noSteps': 'No steps yet. Tap what you set aside.',
+  'turn.undo': 'Undo', 'turn.quick': 'Quick picks', 'turn.straight': 'Straight', 'turn.dicePicker': 'Dice picker', 'turn.manual': 'Manual…', 'turn.forceHot': 'All six dice scored (hot dice)',
+  'turn.bust': 'BUST', 'turn.rollAgain': 'ROLL AGAIN', 'turn.bank': 'BANK +{n}', 'turn.throwAll': 'Throw all 6 dice.', 'turn.throwN': 'Throw the {n} remaining dice.',
+  'turn.rules': 'Rules', 'turn.exit': 'Exit to Home (game keeps running)', 'turn.endNow': 'End game now', 'turn.endTitle': 'End the game now?', 'turn.endBody': 'The game ends with the scores banked so far. An unfinished turn is dropped.',
+  'turn.finalBanner': 'Final round – beat {n}!', 'turn.timeUp': 'Time is up – finish this turn.',
+  'timer.label': 'Time left {time}', 'timer.up': 'Time is up', 'timer.paused': 'paused', 'timer.pause': 'Pause', 'timer.resume': 'Resume',
+
+  'dice.title': 'Dice picker', 'dice.less': 'Fewer {f}s', 'dice.more': 'More {f}s', 'dice.count': '{n} dice showing {f}', 'dice.used': 'Dice used {u}/{r}', 'dice.add': 'Add step',
+  'dice.dead': 'A die showing {f} does not score.', 'dice.invalid': 'This selection is not valid.',
+  'manual.title': 'Manual entry', 'manual.invalid': 'Use a multiple of {m} up to {max}.', 'manual.delete': 'Delete', 'manual.dice': 'Dice used (optional)', 'manual.unknown': 'Unknown', 'manual.add': 'Add step',
+
+  'confirm.title': 'Confirm turn', 'confirm.banks': '{name} banks', 'confirm.busts': '{name} busts', 'confirm.lost': '{n} lost', 'confirm.penalty': 'Bust penalty: −{n}',
+  'confirm.next': 'Next up', 'confirm.pass': 'Confirm & pass', 'confirm.gameEnds': 'This turn ends the game.',
+
+  'board.title': 'Scoreboard', 'board.history': 'History', 'board.first': 'first to {n}', 'board.stats': '{t} {t:turn|turns} · {b} {b:bust|busts}', 'board.now': 'playing now', 'board.progress': '{name} has {n} of {t} points',
+  'board.reached': 'Target reached', 'board.ties': 'Ties share a rank.', 'board.noTurns': 'No turns yet.', 'board.stepsCount': '{n} {n:step|steps}', 'board.final': 'final round', 'board.bust': 'Bust', 'board.discarded': 'Discarded',
+  'board.edited': 'edited · was {n}', 'board.edit': 'Edit {name}, round {r}', 'board.backToTurn': 'Back to turn', 'board.results': 'Results',
+  'edit.title': 'Edit turn', 'edit.result': 'Result', 'edit.banked': 'Banked', 'edit.bust': 'Bust', 'edit.total': 'Points banked', 'edit.lost': 'Points lost', 'edit.invalid': 'Use a multiple of 50 (banked turns need at least 50).',
+  'edit.note': 'All totals are recalculated. The change is marked as edited in the log.', 'edit.save': 'Save change',
+
+  'final.over': 'Game over', 'final.rounds': '{n} {n:round|rounds}', 'final.tie': '{n} (tie)', 'final.line': '{t} {t:turn|turns} · {b} {b:bust|busts} · best {best}', 'final.archive': 'Archive game', 'final.forget': 'Forget game', 'final.log': 'Show turn log',
+  'final.forgetTitle': 'Forget this game?', 'final.forgetBody': 'All data of this game is deleted for good.', 'final.forgetConfirm': 'Forget game',
+
+  'archive.search': 'Search games or players', 'archive.filter': 'Filter by player', 'archive.all': 'All', 'archive.from': 'From', 'archive.to': 'To',
+  'archive.empty': 'No archived games yet. Finish a game and archive it.', 'archive.noMatch': 'No games match. Try a different name or player.',
+
+  'detail.missing': 'Game not found', 'detail.share': 'Share', 'detail.rename': 'Rename', 'detail.delete': 'Delete', 'detail.deleteTitle': 'Delete this game?', 'detail.deleteBody': 'The game and its review are deleted for good.',
+  'detail.tabs': 'Game detail', 'detail.overview': 'Overview', 'detail.players': 'Players', 'detail.log': 'Log', 'detail.chart': 'Chart', 'detail.awards': 'Awards',
+  'detail.avgBanked': 'Avg banked', 'detail.bustRate': 'Bust rate', 'detail.bestTurn': 'Best turn', 'detail.byRound': 'Score by round', 'detail.chartAria': 'Line chart of score by round. Final scores: {list}.',
+
+  'share.title': 'Share image', 'share.alt': 'Preview of the shared image for {name}', 'share.theme': 'Look', 'share.appTheme': 'Like the app', 'share.colourful': 'Colourful', 'share.place': 'Show place name', 'share.privacy': 'Locations are never added to the image.',
+  'share.share': 'Share', 'share.download': 'Download PNG', 'share.copy': 'Copy image', 'share.copied': 'Image copied.', 'share.copyFailed': 'Copying is not available here.', 'share.downloaded': 'Sharing is not available here. The image was downloaded.',
+  'share.first': 'first to {n}', 'share.footer': 'Made with Dices with Friends',
+
+  'set.language': 'Language', 'set.theme': 'Theme', 'set.system': 'System', 'set.light': 'Light', 'set.dark': 'Dark', 'set.during': 'During games',
+  'set.sound': 'Sound', 'set.soundNote': 'Beep when time runs out', 'set.vibration': 'Vibration', 'set.vibrationNote': 'Tick on steps, pulse on bust', 'set.location': 'Save location by default', 'set.locationNote': 'Asked once per game, stays on this device',
+  'set.preset': 'Default rule preset', 'set.presetNote': 'Used for every new game', 'set.backup': 'Backup', 'set.backupBody': 'Your games live only on this phone. Export a file now and then so nothing is lost if the phone is.',
+  'set.excludeLoc': 'Exclude location from the export', 'set.export': 'Export file', 'set.import': 'Import file', 'set.importNote': 'Import shows what is new first and never overwrites games you already have.',
+  'set.importTitle': 'Import backup?', 'set.importConfirm': 'Import', 'set.importSummary': '{n} new games, {e} already here, {i} invalid. Existing games are kept.', 'set.importBad': 'This file is not a valid backup.', 'set.imported': 'Imported {n} games.',
+  'set.storageOk': 'Storage is protected on this device', 'set.storageWarn': 'The browser may clear data when space is low. Export a backup regularly.', 'set.storageUnknown': 'Storage protection is unknown here.',
+  'set.danger': 'Danger zone', 'set.reset': 'Reset all data', 'set.resetNote': 'Asks twice. Deletes every game, player and preset on this device.',
+  'set.reset1Title': 'Reset all data?', 'set.reset1Body': 'Every game, player and preset on this device will be deleted.', 'set.resetContinue': 'Continue', 'set.reset2Title': 'Really delete everything?', 'set.reset2Body': 'This is the last step and it cannot be undone.', 'set.resetEverything': 'Delete everything',
+  'set.footer': 'no accounts, no tracking',
+
+  'error.storage': 'Could not save. Your last action is not stored yet.', 'error.retry': 'Retry', 'error.export': 'Export current game',
+  'pwa.update': 'New version available.', 'pwa.reload': 'Reload',
+
+  'headline.wins': '{winner} wins by {gap} points', 'headline.photo': 'Photo finish! {winner} edges {second} by {gap}', 'headline.comebackShort': '{second}’s comeback falls short', 'headline.tie': '{winner} and {second} share the win',
+  'summary.target': 'Rounds: {rounds}, time: {minutes} min. First to {end}. Lead changes: {leadChanges}. Biggest turn: {biggestName} with {biggest}. Busts in total: {busts}.',
+  'summary.time': 'Rounds: {rounds}, time: {minutes} min of a {end}-minute limit. Lead changes: {leadChanges}. Biggest turn: {biggestName} with {biggest}. Busts in total: {busts}.',
+
+  'style.newcomer.name': 'Newcomer', 'style.newcomer.fb.0': 'Not enough turns yet to read your style. Play a little longer.', 'style.newcomer.fb.1': 'Too early to tell. Come back after a few more turns.', 'style.newcomer.fb.2': 'Just getting started. Your style will show soon.',
+  'style.banker.name': 'The Banker', 'style.banker.fb.0': 'You rarely lose points and bank early. To win more, take one extra roll when you hold 4 or more dice.', 'style.banker.fb.1': 'Safe and steady. Try one more roll when plenty of dice are left.', 'style.banker.fb.2': 'Your busts are rare. A little more nerve could turn good turns into great ones.',
+  'style.gambler.name': 'The Gambler', 'style.gambler.fb.0': 'High risk, high drama. You lost {lost} points to busts. Banking a step earlier would have kept more of them.', 'style.gambler.fb.1': 'You love one more roll. {lost} points went up in smoke, but the big turns were fun.', 'style.gambler.fb.2': 'Bold play! Busts cost you {lost} points. Pick your moment to stop.',
+  'style.streaker.name': 'The Streaker', 'style.streaker.fb.0': 'Hot dice kept falling for you. Big turns decided the game.', 'style.streaker.fb.1': 'You rode the streaks: {hot} hot dice and {big} big turns.', 'style.streaker.fb.2': 'When the dice were on, you made it count.',
+  'style.comeback.name': 'The Comeback Kid', 'style.comeback.fb.0': 'You were {behind} points behind and fought back.', 'style.comeback.fb.1': 'Never out of it: you clawed back {behind} points.', 'style.comeback.fb.2': 'A deficit of {behind} did not stop you.',
+  'style.tortoise.name': 'The Tortoise', 'style.tortoise.fb.0': 'Consistent, reliable scoring. Turn after turn you delivered.', 'style.tortoise.fb.1': 'Slow and steady. Your turns hardly varied.', 'style.tortoise.fb.2': 'Dependable as ever. You rarely had a bad turn.',
+  'style.unlucky.name': 'The Unlucky', 'style.unlucky.fb.0': 'The dice were not on your side: {busts} busts, {streak} in a row at worst.', 'style.unlucky.fb.1': 'Rough night: {busts} busts. Next time is yours.', 'style.unlucky.fb.2': 'Bad luck happens. {busts} busts is a lot for anyone.',
+  'style.balanced.name': 'Balanced', 'style.balanced.fb.0': 'A well-balanced style. No big risks, no big losses.', 'style.balanced.fb.1': 'You mixed caution and daring nicely.', 'style.balanced.fb.2': 'Solid all round. Nothing to fix.',
+  'tag.bigHitter': 'Big hitter', 'tag.ironNerves': 'Iron nerves',
+
+  'award.winner.title': 'Winner', 'award.winner.detail': '{n} points',
+  'award.biggestTurn.title': 'Biggest turn', 'award.biggestTurn.detail': '{n} points',
+  'award.mostHotDice.title': 'Most hot dice', 'award.mostHotDice.detail': '{n} {n:time|times}',
+  'award.bustedMost.title': 'Most busts', 'award.bustedMost.detail': '{n} {n:bust|busts}',
+  'award.mostConsistent.title': 'Most consistent', 'award.mostConsistent.detail': 'avg {n}',
+  'award.bestComeback.title': 'Best comeback', 'award.bestComeback.detail': '{n} behind',
+  'award.closestFinish.title': 'Closest finish', 'award.closestFinish.detail': 'by {n}'
+};

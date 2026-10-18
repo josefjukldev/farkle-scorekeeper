@@ -1,7 +1,7 @@
 # CLAUDE.md — Instructions for Claude Code
 
 ## Mission
-Build the Farkle Scorekeeper PWA exactly as specified in this package. When files conflict, precedence is: `03_game_rules_engine.md` (rules) > `02_functional_requirements.md` > `05_ux_screens_and_flows.md` > the rest.
+Build the **Dices with Friends** PWA (a Farkle scorekeeper) exactly as specified in this package. When files conflict, precedence is: `03_game_rules_engine.md` (rules) > `02_functional_requirements.md` > `05_ux_screens_and_flows.md` > the rest.
 
 ## Non-negotiables
 1. **Pure rules engine.** All scoring and turn logic lives in `src/engine/` as pure TypeScript functions with no React, no DOM, no storage imports. 100% unit-tested before any UI is built.

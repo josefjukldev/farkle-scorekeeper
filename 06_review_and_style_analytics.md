@@ -25,6 +25,15 @@ Computed from turns:
 
 `lostToBusts` is the sum of the unbanked totals at the time of the bust (known because steps are recorded before the bust).
 
+### Precise definitions
+- `turns` includes banked, bust and discarded turns; discarded turns (time-mode `immediate`) are excluded from all rates.
+- `bankAtMinRate` = banked turns with `turnTotal < minBank + 150` divided by banked turns (0 if none).
+- `stdDev` = population standard deviation of banked turn totals (needs ≥ 3 banked turns, otherwise the Tortoise rule does not apply).
+- `comeback` = max over all turn boundaries of `(leaderScore - playerScore)` at the moment that deficit was largest, counted only if the player ended the game with `rank` 1 or finished the game within 500 points of the leader; otherwise 0.
+- `leadChanges` = number of times the player moved from not leading to strictly leading after a turn (ties are not a lead).
+- "Top half" = `rank <= ceil(players / 2)`.
+- Gambler percentage rule: `lostToBusts / (sum of banked totals + lostToBusts) >= 0.35`.
+
 ## 2. Style classification
 Each player receives **one primary style** (and optionally a secondary tag). Evaluate in the order below; first match wins. Thresholds are constants in `src/review/thresholds.ts`. Minimum 4 turns required, otherwise "Newcomer" (not enough data).
 
@@ -58,7 +67,7 @@ Friendly, light, never insulting. Max 2 sentences per player. Czech and English 
 
 ## 6. Share image
 - Generated client-side from an off-screen DOM node (`html-to-image`) or `<canvas>`; PNG, 1080 x 1350 px (4:5) plus optional 1080 x 1920 story format.
-- Contents: app name/logo, game name, date (and place label if the user switches it on), podium of top 3 with names and scores, full ranking list (up to 8 players), up to 3 awards, each player's style label with icon, small footer "Made with Farkle Scorekeeper".
+- Contents: app name/logo, game name, date (and place label if the user switches it on), podium of top 3 with names and scores, full ranking list (up to 8 players), up to 3 awards, each player's style label with icon, small footer "Made with Dices with Friends".
 - Theme: follows the app theme, with a "colourful" fixed theme option for social media.
 - Share flow: `navigator.canShare({ files })` → `navigator.share({ files, title, text })`; fallback "Download PNG" and "Copy image" (Clipboard API).
 - Images are generated on demand and not stored (only the review data is stored), so layout upgrades apply to old games.

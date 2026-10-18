@@ -56,7 +56,7 @@ public/                 icons, manifest assets
 | Install | `beforeinstallprompt` + iOS instructions | In-app hint |
 
 ## 5. PWA requirements
-- Manifest: name, short_name "Farkle", `display: standalone`, theme/background colours, icons 192/512 + maskable, `lang`.
+- Manifest: name "Dices with Friends", short_name "Dices", `display: standalone`, theme/background colours, icons 192/512 + maskable, `lang`.
 - Service worker precaches the app shell; the app has no runtime network dependency.
 - Update strategy: prompt "New version available – reload" (`registerType: 'prompt'`); never reload during an active turn.
 - iOS: `apple-touch-icon`, `viewport-fit=cover`, status-bar meta.
@@ -77,3 +77,8 @@ npm i -D tailwindcss postcss autoprefixer vite-plugin-pwa vitest @testing-librar
 ```
 Scripts: `dev`, `build`, `preview`, `test`, `test:e2e`, `lint`, `typecheck`.
 Deploy as static files (GitHub Pages, Netlify, Cloudflare Pages, or any web server) over HTTPS (required for PWA, geolocation, share).
+
+## 9. GitHub Pages deployment (initial target)
+- Vite `base: '/farkle-scorekeeper/'` (change if a custom domain or other host is used); manifest `start_url` and `scope` relative to the base; hash router avoids 404s on refresh.
+- GitHub Actions workflow `.github/workflows/deploy.yml`: on push to `main` run `npm ci`, `npm run lint`, `npm run typecheck`, `npm test`, `npm run build`, then publish `dist/` with `actions/upload-pages-artifact` and `actions/deploy-pages`.
+- The app is not public yet. GitHub Pages from a private repo needs a paid GitHub plan and the published site is reachable by anyone with the URL, so until launch use `npm run preview` / a local network URL, or keep Pages off. Keep the host abstract so Netlify or Cloudflare Pages is a config change (`base`, no host-specific code).
