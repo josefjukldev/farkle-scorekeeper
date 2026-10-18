@@ -79,6 +79,8 @@ export interface Game {
   activeTurn?: ActiveTurnState;
   result?: GameResult;
   review?: GameReview;
+  /** Set when the game was imported from another device ("shared by a friend"). */
+  origin?: { deviceId: string; importedAt: number };
 }
 
 export interface ActiveTurnState {
@@ -108,6 +110,10 @@ export interface Settings {
   defaultPresetId: string;
   lastEndCondition?: EndCondition;
   lastPlayerIds: Id[];
+  /** Random id of this install; sent along with shared games, never personal data. */
+  deviceId?: string;
+  /** Alias (lower case) -> display name it should be counted as in statistics. */
+  nameAliases?: Record<string, string>;
 }
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -118,5 +124,6 @@ export const DEFAULT_SETTINGS: Settings = {
   sound: false,
   vibration: true,
   defaultPresetId: 'house',
-  lastPlayerIds: []
+  lastPlayerIds: [],
+  nameAliases: {}
 };

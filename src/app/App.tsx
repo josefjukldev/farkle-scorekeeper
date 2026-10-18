@@ -16,6 +16,7 @@ import { Board } from '../ui/screens/Board';
 import { Final } from '../ui/screens/Final';
 import { Archive } from '../ui/screens/Archive';
 import { GameDetail } from '../ui/screens/GameDetail';
+import { ImportScreen } from '../ui/screens/ImportScreen';
 import { Settings } from '../ui/screens/Settings';
 import { Stats } from '../ui/screens/Stats';
 import { LiveBoard } from '../ui/screens/LiveBoard';
@@ -96,7 +97,10 @@ export function App() {
       screen = <Archive />;
       break;
     case 'game':
-      screen = route.arg ? <GameDetail id={route.arg} /> : <Archive />;
+      screen = route.arg ? <GameDetail id={route.arg} fresh={route.sub === 'new'} /> : <Archive />;
+      break;
+    case 'import':
+      screen = <ImportScreen payload={route.arg} />;
       break;
     case 'settings':
       screen = <Settings />;

@@ -70,6 +70,10 @@ Each requirement has an ID used in tests (`08_test_plan_and_acceptance.md`).
 | FR-602 | Game detail: dashboard (ranking), review, per-player stats, full turn log, score-progress line chart over rounds. | M |
 | FR-603 | Delete archived game (with confirmation). Rename archived game. | M |
 | FR-604 | **Share**: generate a PNG dashboard image (1080x1350) with game name, date, winner, ranking, awards, style labels. Use the Web Share API with file when available; otherwise offer Download and "Copy image". | M |
+| FR-606 | **Send to players:** from Game detail (and a prompt right after archiving) the game can be sent as a link or a file. Options: include the place name (default off) and a smaller "compact" bundle without step details (default on). Coordinates are never included. | M |
+| FR-607 | **Add a shared game:** opening a link, choosing a file or pasting a link shows a preview (name, date, players, winner, turns) and adds the game only after confirmation. Games are merged by id: a game that is already present is skipped and nothing is overwritten. Imported games are labelled "shared with you" and sanitised (no coordinates, bounded text). | M |
+| FR-608 | **Possible duplicates:** archived games with the same players started within 4 hours of each other (different ids) are flagged in the Archive; no automatic merging. | S |
+| FR-609 | **Merge player names:** Settings lets the user count one spelling as another in the statistics (alias table); games are not changed. | S |
 | FR-605 | Cross-game player statistics page (games, wins, win rate, average turn score, bust rate) based on the archive. | C |
 
 ## 7. Persistence, settings, platform

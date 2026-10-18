@@ -181,5 +181,8 @@ Dexie versioned upgrades; each upgrade function is unit-tested with a fixture of
 ```
 Import: validate with a Zod schema; show counts (new / already present / invalid); merge by id; never delete existing data.
 
+## 7b. Shared game bundle
+A shared game is the backup format with one game plus `bundleKind: 'game'`, `exportedBy` (random device id), `compact` (turn steps removed). Link form: `#/import/<payload>` where payload is `z` + base64url(deflate-raw(JSON)), or `j` + base64url(JSON) when the browser has no CompressionStream. Limits: 60 000 characters per link, 200 000 bytes after inflating (decompression-bomb guard), at most 100 games per file. Import validates the structure, strips coordinates and leftovers of a running game, bounds text lengths, sets `Game.origin` and never overwrites an existing id. New fields: `Game.origin`, `Settings.deviceId`, `Settings.nameAliases`.
+
 ## 8. Privacy
 Location is stored only on the device. Exports contain location; the export dialog warns about this and offers "Exclude location".
