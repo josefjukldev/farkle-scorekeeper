@@ -106,3 +106,12 @@ export async function resetAll(): Promise<void> {
     await Promise.all([db.games.clear(), db.turns.clear(), db.players.clear(), db.presets.clear(), db.settings.clear()]);
   });
 }
+
+/** Random id of this install, created on first use. */
+export async function getDeviceId(): Promise<string> {
+  const s = await getSettings();
+  if (s.deviceId) return s.deviceId;
+  const deviceId = crypto.randomUUID();
+  await saveSettings({ ...s, deviceId });
+  return deviceId;
+}

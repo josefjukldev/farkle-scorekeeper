@@ -70,7 +70,7 @@ export function Final() {
             setBusy(true);
             const id = await archive();
             setBusy(false);
-            if (id) navigate(`game/${id}`);
+            if (id) navigate(`game/${id}/new`);
           }}
         >
           {t('final.archive')}

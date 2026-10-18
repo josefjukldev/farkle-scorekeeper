@@ -56,7 +56,7 @@ export function Board() {
           onChange={setTab}
         />
       </div>
-      <main className="content">
+      <main className="content" tabIndex={0}>
         {tab === 'board' && (
           <div className={'list' + (rows.length > 5 ? ' dense' : '')}>
             {rows.map((r, i) => {

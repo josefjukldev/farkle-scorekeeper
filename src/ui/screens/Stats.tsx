@@ -4,20 +4,22 @@ import { aggregatePlayers } from '../../review/crossGame';
 import type { PlayerTotals } from '../../review/crossGame';
 import { listArchive } from '../../storage/repo';
 import { useT } from '../../i18n';
+import { useSettings } from '../../state/settingsStore';
 import { useFmt } from '../format';
 
 export function Stats() {
   const t = useT();
   const f = useFmt();
+  const aliases = useSettings((s) => s.settings.nameAliases);
   const [rows, setRows] = useState<PlayerTotals[] | null>(null);
 
   useEffect(() => {
     let alive = true;
-    listArchive().then((g) => alive && setRows(aggregatePlayers(g)));
+    listArchive().then((g) => alive && setRows(aggregatePlayers(g, aliases ?? {})));
     return () => {
       alive = false;
     };
-  }, []);
+  }, [aliases]);
 
   return (
     <div className="screen">
@@ -25,7 +27,7 @@ export function Stats() {
         <BackButton href="#/archive" label={t('common.back')} />
         <h1>{t('stats.title')}</h1>
       </header>
-      <main className="content">
+      <main className="content" tabIndex={0}>
         {rows && rows.length === 0 && <p className="muted center-text">{t('stats.empty')}</p>}
         <div className="list">
           {(rows ?? []).map((r, i) => (

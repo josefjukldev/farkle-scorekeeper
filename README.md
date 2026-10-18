@@ -22,6 +22,7 @@ In a restricted environment point Playwright at an installed Chromium with `CHRO
 - Turn entry: quick picks generated from the rules, dice picker, manual entry, hot dice, undo, bank window (2 or fewer dice left, or hot dice), minimum to bank, bust, confirm and hand-over screens, undo of the last finished turn.
 - Live scoreboard and history with editing of past turns (recomputed and flagged "edited"), timer with pause, final round, end game now.
 - Final results with ties, then Archive (review, awards, player styles, chart, share image) or Forget.
+- Share a game with the other players (link or file) and add games others sent you; the same game is never added twice;
 - Archive search, player and date filters, rename, delete; PNG share image (1080x1350) via Web Share, download or copy.
 - Settings: Czech / English, theme, sound, vibration, backup export and import with preview, reset.
 - Installable PWA that works offline; the game is saved after every action and restored after a reload.

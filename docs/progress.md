@@ -12,8 +12,8 @@ Legend: [x] done and covered by an automated test or check, [~] done in the prot
 - [~] M6 Settings, i18n, backup, PWA, accessibility (see gaps)
 
 ## Quality checks run on this prototype
-- Unit tests: 106 passing (engine, review, storage, backup, store, i18n keys and plurals).
-- E2E (Playwright, Pixel 5 profile): 24 passing, including no-scroll fit checks at four iPhone Chrome viewports, including crash recovery, offline, time mode, backup round trip, share (1080x1350 PNG, `navigator.share` mocked and fallback), location granted and denied.
+- Unit tests: 122 passing (engine, review, storage, backup, store, i18n keys and plurals).
+- E2E (Playwright, Pixel 5 profile): 29 passing, including no-scroll fit checks, two-browser sharing tests, at four iPhone Chrome viewports, including crash recovery, offline, time mode, backup round trip, share (1080x1350 PNG, `navigator.share` mocked and fallback), location granted and denied.
 - axe (WCAG 2.1 A/AA) scans of 14 screens and sheets in light and dark: no violations.
 - Lighthouse (mobile, local preview): performance 98, accessibility 100, best practices 96. Installability is covered by the manifest and service worker, not by Lighthouse 12 (no PWA category).
 - First load: 449 KB JS, 139 KB gzipped.
@@ -57,6 +57,14 @@ Legend: [x] done and covered by an automated test or check, [~] done in the prot
 - No separate Roll again button; the Bank button shows why it is disabled.
 - Fit to screen: all primary screens fit iPhone Chrome viewports without scrolling (375x540 up to 430x780), checked by `tests/e2e/fit.spec.ts`. New game is now two steps. On the smallest phones controls are 44 px (the spec's 48 px minimum applies from about 700 px height).
 - Trade-off to know: in Manual entry the dice count is optional. When it is left as "?", the app cannot enforce the "2 or fewer dice left" bank rule for that step (it treats the bank window as open).
+
+## Shared archive, Phase 1 (proposal in `docs/proposals/shared-archive.md`)
+- [x] Send to players: link, file, "smaller link", place name opt-in, coordinates never included (FR-606)
+- [x] Add a shared game: link, pasted link or file, preview, confirm, merge by id, sanitised (FR-607)
+- [x] Possible-duplicate hint (FR-608) and merge player names for statistics (FR-609)
+- Tested: 16 bundle/import/duplicate/alias unit tests (including zip-bomb and tampered payloads), 5 two-browser e2e tests (link, file, paste, privacy, duplicates and aliases).
+- **Deviation from the proposal: no QR code.** Measured link sizes are about 1.7 KB for a tiny game and about 3.4 KB for a 4-player, 11-round game, too large for a reliably scannable QR code, and the extra library is not worth it. Link, copy and file cover the same need; the system share sheet gives nearby sharing.
+- Phase 2 (opt-in encrypted group archive) is still only a proposal.
 
 ## Deviations from the design package (all deliberate)
 - **Styling:** plain CSS with variables (`src/styles.css`) instead of Tailwind. ESLint (with the engine-purity rule) and Prettier are set up: `npm run lint`, `npm run format`.

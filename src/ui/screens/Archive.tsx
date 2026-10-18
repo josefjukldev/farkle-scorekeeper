@@ -1,5 +1,9 @@
 import { useEffect, useState } from 'react';
-import { BottomNav, PlayerBadge } from '../components';
+import { BottomNav, PlayerBadge, Sheet } from '../components';
+import { ImportPreview } from './ImportPreview';
+import { decodePayload, payloadFromLink } from '../../storage/bundle';
+import { findDuplicateHints } from '../../review/crossGame';
+import { navigate } from '../router';
 import { listArchive } from '../../storage/repo';
 import type { Game } from '../../storage/types';
 import { useT } from '../../i18n';
@@ -14,6 +18,7 @@ export function Archive() {
   const [from, setFrom] = useState('');
   const [to, setTo] = useState('');
   const [loaded, setLoaded] = useState(false);
+  const [importing, setImporting] = useState(false);
 
   useEffect(() => {
     listArchive().then((g) => {
@@ -25,6 +30,8 @@ export function Archive() {
   const term = q.trim().toLowerCase();
   const fromMs = from ? new Date(from).getTime() : 0;
   const toMs = to ? new Date(to).getTime() + 86400000 : Infinity;
+  const hints = findDuplicateHints(all);
+  const nameOfGame = (id: string) => all.find((x) => x.id === id)?.name ?? '';
   const games = all
     .filter((g) => !who || g.players.some((p) => p.name === who))
     .filter((g) => !term || g.name.toLowerCase().includes(term) || g.players.some((p) => p.name.toLowerCase().includes(term)))
@@ -34,11 +41,14 @@ export function Archive() {
     <div className="screen">
       <header className="app-head">
         <h1 className="grow">{t('nav.archive')}</h1>
+        <button type="button" className="btn btn-outline small-btn" onClick={() => setImporting(true)}>
+          {t('archive.import')}
+        </button>
         <a href="#/stats" className="btn btn-outline small-btn">
           {t('stats.open')}
         </a>
       </header>
-      <main className="content">
+      <main className="content" tabIndex={0}>
         <label className="field">
           <span className="sr-only">{t('archive.search')}</span>
           <input type="search" placeholder={t('archive.search')} value={q} onChange={(e) => setQ(e.target.value)} />
@@ -78,6 +88,14 @@ export function Archive() {
                     {g.placeLabel ? ` · ${g.placeLabel}` : ''}
                   </small>
                   <small className="muted">{g.players.map((p) => p.name).join(', ')}</small>
+                  {(hints.has(g.id) || g.origin) && (
+                    <span className="row gap wrap">
+                      {g.origin && <small className="chip-sm">{t('detail.shared')}</small>}
+                      {hints.has(g.id) && (
+                        <small className="chip-sm warn">{t('archive.duplicate', { name: nameOfGame(hints.get(g.id)!) })}</small>
+                      )}
+                    </span>
+                  )}
                 </span>
                 <span className="col right">
                   {w && (
@@ -98,6 +116,67 @@ export function Archive() {
         </div>
       </main>
       <BottomNav active="archive" />
+      {importing && <ImportSheet onClose={() => setImporting(false)} />}
     </div>
+  );
+}
+
+function ImportSheet({ onClose }: { onClose: () => void }) {
+  const t = useT();
+  const [link, setLink] = useState('');
+  const [text, setText] = useState<string | null>(null);
+  const [error, setError] = useState('');
+
+  const checkLink = async () => {
+    const r = await decodePayload(payloadFromLink(link));
+    if (r.ok) {
+      setError('');
+      setText(r.text);
+    } else setError(t('import.link.' + r.error));
+  };
+
+  return (
+    <Sheet title={t('import.title')} onClose={onClose}>
+      {text === null ? (
+        <div className="stack">
+          <p className="muted body-text">{t('import.intro')}</p>
+          <label className="field">
+            <span className="eyebrow">{t('import.pasteLink')}</span>
+            <input value={link} onChange={(e) => setLink(e.target.value)} aria-invalid={!!error} placeholder="https://…/#/import/…" />
+          </label>
+          {error && (
+            <p className="err" role="alert">
+              {error}
+            </p>
+          )}
+          <button type="button" className="btn btn-primary" disabled={link.trim().length < 3} onClick={checkLink}>
+            {t('import.check')}
+          </button>
+          <label className="btn btn-outline file-btn">
+            {t('import.chooseFile')}
+            <input
+              type="file"
+              accept="application/json,.json"
+              className="sr-only"
+              aria-label={t('import.chooseFile')}
+              onChange={async (e) => {
+                const file = e.target.files?.[0];
+                e.target.value = '';
+                if (file) setText(await file.text());
+              }}
+            />
+          </label>
+        </div>
+      ) : (
+        <ImportPreview
+          text={text}
+          onCancel={() => setText(null)}
+          onAdded={(ids) => {
+            onClose();
+            navigate(ids[0] ? `game/${ids[0]}` : 'archive');
+          }}
+        />
+      )}
+    </Sheet>
   );
 }

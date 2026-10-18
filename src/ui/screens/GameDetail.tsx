@@ -9,6 +9,7 @@ import { useFmt } from '../format';
 import { navigate } from '../router';
 import { paletteFor } from '../palette';
 import { ShareDialog } from './ShareDialog';
+import { SendDialog } from './SendDialog';
 
 export function reviewText(lang: 'en' | 'cs', review: GameReview, playerId: string, name: (id: string) => string) {
   const a = review.players[playerId];
@@ -21,14 +22,15 @@ export function reviewText(lang: 'en' | 'cs', review: GameReview, playerId: stri
   };
 }
 
-export function GameDetail({ id }: { id: string }) {
+export function GameDetail({ id, fresh = false }: { id: string; fresh?: boolean }) {
   const t = useT();
   const f = useFmt();
   const lang = useSettings((s) => s.settings.language);
   const [game, setGame] = useState<Game | undefined | null>(undefined);
   const [turns, setTurns] = useState<Turn[]>([]);
   const [tab, setTab] = useState<'overview' | 'players' | 'log' | 'chart'>('overview');
-  const [sheet, setSheet] = useState<'share' | 'rename' | 'delete' | null>(null);
+  const [sheet, setSheet] = useState<'share' | 'send' | 'rename' | 'delete' | null>(null);
+  const [promptSeen, setPromptSeen] = useState(false);
   const [name, setName] = useState('');
 
   const [version, setVersion] = useState(0);
@@ -81,17 +83,44 @@ export function GameDetail({ id }: { id: string }) {
           <small className="muted">
             {f.date(game.createdAt)}
             {game.placeLabel ? ` · ${game.placeLabel}` : ''}
+            {game.origin ? ` · ${t('detail.shared')}` : ''}
           </small>
         </span>
       </header>
+      {fresh && !promptSeen && (
+        <div className="card col pad-card" role="region" aria-label={t('detail.sendPromptTitle')}>
+          <strong>{t('detail.sendPromptTitle')}</strong>
+          <small className="muted">{t('detail.sendPromptBody')}</small>
+          <div className="row gap">
+            <button
+              type="button"
+              className="btn btn-primary grow"
+              onClick={() => {
+                setPromptSeen(true);
+                setSheet('send');
+              }}
+            >
+              {t('detail.send')}
+            </button>
+            <button type="button" className="btn btn-quiet" onClick={() => setPromptSeen(true)}>
+              {t('detail.notNow')}
+            </button>
+          </div>
+        </div>
+      )}
       <div className="row gap pad-x">
-        <button type="button" className="btn btn-primary grow" onClick={() => setSheet('share')}>
+        <button type="button" className="btn btn-primary grow" onClick={() => setSheet('send')}>
+          {t('detail.send')}
+        </button>
+        <button type="button" className="btn btn-outline" onClick={() => setSheet('share')}>
           {t('detail.share')}
         </button>
-        <button type="button" className="btn btn-outline" onClick={() => setSheet('rename')}>
+      </div>
+      <div className="row gap pad-x">
+        <button type="button" className="btn btn-outline grow" onClick={() => setSheet('rename')}>
           {t('detail.rename')}
         </button>
-        <button type="button" className="btn btn-danger" onClick={() => setSheet('delete')}>
+        <button type="button" className="btn btn-danger grow" onClick={() => setSheet('delete')}>
           {t('detail.delete')}
         </button>
       </div>
@@ -109,7 +138,7 @@ export function GameDetail({ id }: { id: string }) {
           ]}
         />
       </div>
-      <main className="content">
+      <main className="content" tabIndex={0}>
         {tab === 'overview' && (
           <>
             <div className="card hl">
@@ -197,6 +226,7 @@ export function GameDetail({ id }: { id: string }) {
         {tab === 'chart' && <ScoreChart game={game} turns={turns} />}
       </main>
       {sheet === 'share' && <ShareDialog game={game} onClose={() => setSheet(null)} />}
+      {sheet === 'send' && <SendDialog game={game} onClose={() => setSheet(null)} />}
       {sheet === 'rename' && (
         <Sheet title={t('detail.rename')} onClose={() => setSheet(null)}>
           <label className="field">

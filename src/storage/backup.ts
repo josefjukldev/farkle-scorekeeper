@@ -14,7 +14,7 @@ interface Backup {
 }
 
 /** Structural check of a backup file (kept dependency-free to keep the app small). */
-function parseBackup(json: unknown): Backup | undefined {
+export function parseBackup(json: unknown): Backup | undefined {
   if (typeof json !== 'object' || json === null) return undefined;
   const b = json as Record<string, unknown>;
   const v = b.schemaVersion;

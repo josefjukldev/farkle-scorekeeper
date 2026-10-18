@@ -6,6 +6,7 @@ import type { ImportReport } from '../../storage/backup';
 import { listPresets, resetAll } from '../../storage/repo';
 import type { Preset } from '../../storage/types';
 import { useGame } from '../../state/gameStore';
+import { AliasSheet } from './AliasSheet';
 import { useSettings } from '../../state/settingsStore';
 import { downloadBlob } from '../../platform/share';
 import { useT } from '../../i18n';
@@ -21,6 +22,7 @@ export function Settings() {
   const [pending, setPending] = useState<{ text: string; report: ImportReport } | null>(null);
   const [done, setDone] = useState('');
   const [reset, setReset] = useState<0 | 1 | 2>(0);
+  const [aliasOpen, setAliasOpen] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -38,7 +40,7 @@ export function Settings() {
       <header className="app-head">
         <h1>{t('nav.settings')}</h1>
       </header>
-      <main className="content">
+      <main className="content" tabIndex={0}>
         <section>
           <h2 className="eyebrow">{t('set.language')}</h2>
           <Segmented
@@ -146,6 +148,15 @@ export function Settings() {
           )}
         </section>
         <section>
+          <h2 className="eyebrow">{t('set.names')}</h2>
+          <div className="card col">
+            <p className="muted">{t('set.namesNote')}</p>
+            <button type="button" className="btn btn-outline" onClick={() => setAliasOpen(true)}>
+              {t('set.namesOpen')}
+            </button>
+          </div>
+        </section>
+        <section>
           <h2 className="eyebrow danger">{t('set.danger')}</h2>
           <button type="button" className="btn btn-danger" onClick={() => setReset(1)}>
             {t('set.reset')}
@@ -174,6 +185,7 @@ export function Settings() {
           }}
         />
       )}
+      {aliasOpen && <AliasSheet onClose={() => setAliasOpen(false)} />}
       {reset === 1 && (
         <ConfirmDialog
           title={t('set.reset1Title')}
