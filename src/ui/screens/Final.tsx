@@ -34,14 +34,14 @@ export function Final() {
         <h1>{game.name}</h1>
         <small className="muted">{t('final.rounds', { n: game.round })}</small>
       </header>
-      <main className="content">
+      <main className="content final">
         <div className="podium" role="list">
           {podium.map((r) => (
             <div key={r.playerId} role="listitem" className="podium-col">
-              <PlayerBadge name={name(r.playerId).name} seat={name(r.playerId).seat} size={48} />
+              <PlayerBadge name={name(r.playerId).name} seat={name(r.playerId).seat} size={36} />
               <strong>{name(r.playerId).name}</strong>
-              <span className="muted">{f.n(r.score)}</span>
-              <div className={'podium-bar r' + Math.min(r.rank, 3)} style={{ height: r.rank === 1 ? 128 : r.rank === 2 ? 92 : 68 }}>{rankLabel(r.rank, tieOf(r.rank))}</div>
+              <span className="muted small">{f.n(r.score)}</span>
+              <div className={'podium-bar r' + Math.min(r.rank, 3)} style={{ height: r.rank === 1 ? 64 : r.rank === 2 ? 48 : 36 }}>{rankLabel(r.rank, tieOf(r.rank))}</div>
             </div>
           ))}
         </div>
@@ -49,7 +49,7 @@ export function Final() {
           {ranking.map((r) => (
             <div key={r.playerId} className="row gap rank-row">
               <strong className="rank">{rankLabel(r.rank, tieOf(r.rank))}</strong>
-              <PlayerBadge name={name(r.playerId).name} seat={name(r.playerId).seat} size={32} />
+              <PlayerBadge name={name(r.playerId).name} seat={name(r.playerId).seat} size={30} />
               <span className="grow col"><strong>{name(r.playerId).name}</strong><small className="muted">{t('final.line', { t: r.turns, b: r.busts, best: f.n(r.bestTurn) })}</small></span>
               <strong className="score-sm">{f.n(r.score)}</strong>
             </div>
@@ -58,8 +58,10 @@ export function Final() {
       </main>
       <div className="action-bar single col">
         <button type="button" className="btn btn-primary big-btn" disabled={busy} onClick={async () => { setBusy(true); const id = await archive(); setBusy(false); if (id) navigate(`game/${id}`); }}>{t('final.archive')}</button>
-        <button type="button" className="btn btn-danger" onClick={() => setConfirm(true)}>{t('final.forget')}</button>
-        <a href="#/board" className="link-btn center-text">{t('final.log')}</a>
+        <div className="grid2">
+          <button type="button" className="btn btn-danger" onClick={() => setConfirm(true)}>{t('final.forget')}</button>
+          <a href="#/board" className="btn btn-outline">{t('final.logShort')}</a>
+        </div>
       </div>
       {confirm && <ConfirmDialog title={t('final.forgetTitle')} body={t('final.forgetBody')} confirmLabel={t('final.forgetConfirm')} danger onCancel={() => setConfirm(false)} onConfirm={async () => { await forget(); setConfirm(false); navigate('', true); }} />}
     </div>

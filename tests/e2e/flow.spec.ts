@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { bankTurn, fresh, startGame, startTurn } from './helpers';
+import { bankTurn, fresh, quick, startGame, startTurn } from './helpers';
 
 test('happy path: target game, final round, archive, reload, review', async ({ page }) => {
   await fresh(page);
@@ -8,9 +8,10 @@ test('happy path: target game, final round, archive, reload, review', async ({ p
 
   // Ann: 3x1 = 1000 -> reaches the target on the first turn (3 dice used, 3 left: bank blocked)
   await startTurn(page);
+  await quick(page);
   await page.getByRole('button', { name: /^3×1/ }).click();
   await expect(page.getByRole('button', { name: /^BANK/ })).toBeDisabled();
-  await expect(page.getByText(/Bank needs 2 or fewer dice/).first()).toBeVisible();
+  await expect(page.getByRole('button', { name: /^BANK/ })).toContainText(/Needs 2 or fewer dice/);
   await page.screenshot({ path: 'shots/02-turn-blocked.png' });
   await page.getByRole('button', { name: /^1\s*\+100/ }).click();
   await expect(page.getByRole('button', { name: /^BANK/ })).toBeEnabled();
@@ -44,6 +45,7 @@ test('crash recovery: half-entered turn survives a reload', async ({ page }) => 
   await fresh(page);
   await startGame(page, ['Ann', 'Bob']);
   await startTurn(page);
+  await quick(page);
   await page.getByRole('button', { name: /^3×4/ }).click();
   await page.getByRole('button', { name: /^1\s*\+100/ }).click();
   await page.reload();
@@ -55,6 +57,7 @@ test('forget removes the game for good', async ({ page }) => {
   await fresh(page);
   await startGame(page, ['Ann', 'Bob']);
   await startTurn(page);
+  await quick(page);
   await page.getByRole('button', { name: /^3×4/ }).click();
   await page.getByRole('button', { name: /^1\s*\+100/ }).click();
   await page.getByRole('button', { name: /^BANK/ }).click();
@@ -74,6 +77,7 @@ test('bust, undo last turn and scoreboard edit', async ({ page }) => {
   await fresh(page);
   await startGame(page, ['Ann', 'Bob']);
   await startTurn(page);
+  await quick(page);
   await page.getByRole('button', { name: /^BUST/ }).click();
   await page.getByRole('button', { name: /Confirm & pass/ }).click();
   await expect(page.getByText('Ann busted')).toBeVisible();
@@ -99,6 +103,7 @@ test('time mode: expiry mid-turn asks to finish the turn, then ends the game', a
   await fresh(page);
   await startGame(page, ['Ann', 'Bob'], { minutes: 1 });
   await startTurn(page);
+  await quick(page);
   await page.getByRole('button', { name: /^3×4/ }).click();
   await page.getByRole('button', { name: /^1\s*\+100/ }).click();
   await page.clock.fastForward(61000);
@@ -124,6 +129,7 @@ test('language switch keeps data and translates', async ({ page }) => {
   await startGame(page, ['Ann', 'Bob']);
   await page.screenshot({ path: 'shots/09-cs-handover.png' });
   await startTurn(page);
+  await quick(page);
   await expect(page.getByRole('button', { name: /^PROPADLO/ })).toBeVisible();
   await page.screenshot({ path: 'shots/10-cs-turn.png' });
 });

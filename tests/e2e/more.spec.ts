@@ -1,11 +1,12 @@
 import { expect, test } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 import type { Page } from '@playwright/test';
-import { bankTurn, fresh, startGame, startTurn } from './helpers';
+import { bankTurn, fresh, quick, startGame, startTurn } from './helpers';
 
 async function archivedGame(page: Page) {
   await startGame(page, ['Ann', 'Bob'], { target: 1000 });
   await startTurn(page);
+  await quick(page);
   await page.getByRole('button', { name: /^3×1 \+/ }).click();
   await page.getByRole('button', { name: /^1 \+/ }).click();
   await page.getByRole('button', { name: /^BANK/ }).click();
@@ -64,9 +65,10 @@ test('location granted is stored; denied still starts the game', async ({ browse
   const p1 = await granted.newPage();
   await fresh(p1);
   await p1.getByRole('button', { name: 'New game' }).click();
-  await p1.getByRole('switch', { name: /Save location/ }).click();
   await p1.getByRole('textbox', { name: 'Player 1 name' }).fill('Ann');
   await p1.getByRole('textbox', { name: 'Player 2 name' }).fill('Bob');
+  await p1.getByRole('button', { name: 'Next' }).click();
+  await p1.getByRole('switch', { name: /Save location/ }).click();
   await p1.getByRole('button', { name: 'Start game' }).click();
   await expect(p1.getByRole('button', { name: 'Start turn' })).toBeVisible();
   const readLoc = () => p1.evaluate(() => new Promise((resolve) => {
@@ -80,9 +82,10 @@ test('location granted is stored; denied still starts the game', async ({ browse
   const p2 = await denied.newPage();
   await fresh(p2);
   await p2.getByRole('button', { name: 'New game' }).click();
-  await p2.getByRole('switch', { name: /Save location/ }).click();
   await p2.getByRole('textbox', { name: 'Player 1 name' }).fill('Ann');
   await p2.getByRole('textbox', { name: 'Player 2 name' }).fill('Bob');
+  await p2.getByRole('button', { name: 'Next' }).click();
+  await p2.getByRole('switch', { name: /Save location/ }).click();
   await p2.getByRole('button', { name: 'Start game' }).click();
   await expect(p2.getByRole('button', { name: 'Start turn' })).toBeVisible();
   await denied.close();
@@ -125,30 +128,55 @@ test('validation: duplicate names disable Start', async ({ page }) => {
   await page.getByRole('textbox', { name: 'Player 1 name' }).fill('Ann');
   await page.getByRole('textbox', { name: 'Player 2 name' }).fill('ann');
   await expect(page.getByText('Another player already has this name.')).toBeVisible();
-  await expect(page.getByRole('button', { name: 'Start game' })).toBeDisabled();
+  await expect(page.getByRole('button', { name: 'Next' })).toBeDisabled();
   await page.screenshot({ path: 'shots/12-validation.png' });
 });
 
-test('dice picker and manual entry add steps', async ({ page }) => {
+test('turn screen: manual entry is the default, quick picks is the second view, no dice picker', async ({ page }) => {
   await fresh(page);
   await startGame(page, ['Ann', 'Bob']);
   await startTurn(page);
-  await page.getByRole('button', { name: 'Dice picker' }).click();
-  await page.getByRole('button', { name: 'More 4s' }).click();
-  await page.getByRole('button', { name: 'More 4s' }).click();
-  await expect(page.getByText('A die showing 4 does not score.')).toBeVisible();
-  await page.getByRole('button', { name: 'More 4s' }).click();
-  await page.getByRole('button', { name: 'More 1s' }).click();
-  await expect(page.getByText('Dice used 4/6')).toBeVisible();
+  // manual view first, calculator keys only (no +50 / +100, no dice picker)
+  await expect(page.getByRole('button', { name: 'Manual', exact: true })).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.getByRole('button', { name: '+50' })).toHaveCount(0);
+  await expect(page.getByRole('button', { name: '+100' })).toHaveCount(0);
+  await expect(page.getByRole('button', { name: /Dice picker/i })).toHaveCount(0);
+  const pad = page.locator('.keypad4');
+  const press = async (...keys: string[]) => { for (const k of keys) await pad.getByRole('button', { name: k, exact: true }).click(); };
+  await press('3', '5', '5');
+  await expect(page.getByText('multiple of 50')).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Add step' })).toBeDisabled(); // 355
+  await pad.getByRole('button', { name: 'Delete' }).click();
+  await press('0');
   await page.getByRole('button', { name: 'Add step' }).click();
-  await expect(page.locator('.turn-total')).toHaveText('500');
-  await page.getByRole('button', { name: 'Manual…' }).click();
-  await page.getByRole('button', { name: '3', exact: true }).click();
-  await page.getByRole('button', { name: '5', exact: true }).click();
-  await page.getByRole('button', { name: '0', exact: true }).click();
+  await expect(page.locator('.turn-total')).toHaveText('350');
+  // without a dice count the dice are unknown; with one they are tracked
+  await expect(page.getByText('Dice left: ?')).toBeVisible();
+  await page.getByRole('button', { name: 'Undo' }).click();
+  await press('4', '00', '0');
+  await page.getByRole('group', { name: 'Dice used (optional)' }).getByRole('button', { name: '3', exact: true }).click();
   await page.getByRole('button', { name: 'Add step' }).click();
-  await expect(page.locator('.turn-total')).toHaveText('850');
-  await page.screenshot({ path: 'shots/13-after-manual.png' });
+  await expect(page.locator('.turn-total')).toHaveText('4,000');
+  await expect(page.getByText('Dice left: 3')).toBeVisible();
+  await page.screenshot({ path: 'shots/13-manual.png' });
+  // quick picks as the alternative view
+  await page.getByRole('button', { name: 'Quick picks', exact: true }).click();
+  await expect(page.getByRole('button', { name: /^3×4 \+/ })).toBeVisible();
+  await page.screenshot({ path: 'shots/14-quick.png' });
+  await page.getByRole('button', { name: 'Manual', exact: true }).click();
+  await expect(page.getByRole('button', { name: 'Add step' })).toBeVisible();
+});
+
+test('bank blocked reason is shown on the Bank button', async ({ page }) => {
+  await fresh(page);
+  await startGame(page, ['Ann', 'Bob']);
+  await startTurn(page);
+  await expect(page.getByRole('button', { name: /^BANK/ })).toContainText('Add points first');
+  await quick(page);
+  await page.getByRole('button', { name: /^3×4 \+/ }).click();
+  await expect(page.getByRole('button', { name: /^BANK/ })).toContainText('Needs 2 or fewer dice');
+  await page.getByRole('button', { name: /^1 \+/ }).click();
+  await expect(page.getByRole('button', { name: /^BANK/ })).toBeEnabled();
 });
 
 test.describe('accessibility (axe, WCAG 2.1 AA)', () => {
@@ -167,20 +195,21 @@ test.describe('accessibility (axe, WCAG 2.1 AA)', () => {
       await page.getByRole('link', { name: 'Home' }).click();
       await scan(page, 'home');
       await page.getByRole('button', { name: 'New game' }).click();
-      await scan(page, 'new game');
+      await page.getByRole('textbox', { name: 'Player 1 name' }).fill('Ann');
+      await page.getByRole('textbox', { name: 'Player 2 name' }).fill('Bob');
+      await scan(page, 'new game step 1');
+      await page.getByRole('button', { name: 'Next' }).click();
+      await scan(page, 'new game step 2');
       await page.getByRole('button', { name: 'Edit', exact: true }).click();
       await scan(page, 'rules editor');
       await page.keyboard.press('Escape');
-      await page.getByRole('textbox', { name: 'Player 1 name' }).fill('Ann');
-      await page.getByRole('textbox', { name: 'Player 2 name' }).fill('Bob');
       await page.getByRole('button', { name: 'Start game' }).click();
       await scan(page, 'hand-over');
       await startTurn(page);
+      await scan(page, 'turn entry manual');
+      await quick(page);
       await page.getByRole('button', { name: /^3×4 \+/ }).click();
-      await scan(page, 'turn entry');
-      await page.getByRole('button', { name: 'Dice picker' }).click();
-      await scan(page, 'dice picker');
-      await page.keyboard.press('Escape');
+      await scan(page, 'turn entry quick');
       await page.getByRole('button', { name: 'BUST' }).click();
       await scan(page, 'confirm');
       await page.getByRole('button', { name: /Confirm & pass/ }).click();

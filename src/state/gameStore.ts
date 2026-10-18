@@ -58,6 +58,15 @@ interface GameStore {
 
 const uuid = () => crypto.randomUUID();
 
+/** Actions read-modify-write the game, so they must never overlap (fast double taps). */
+let queue: Promise<unknown> = Promise.resolve();
+const serial = <A extends unknown[], R>(fn: (...a: A) => Promise<R>) => (...a: A): Promise<R> => {
+  const run = queue.then(() => fn(...a));
+  queue = run.catch(() => undefined);
+  return run;
+};
+const SERIAL_ACTIONS = ['startTurn', 'addStep', 'undoStep', 'hotDice', 'recordTurn', 'undoLastTurn', 'editTurn', 'pauseTimer', 'resumeTimer', 'endGameNow', 'attachLocation'] as const;
+
 export const useGame = create<GameStore>((set, get) => {
   /** Writes through to storage before the UI sees the new state (FR-800). */
   async function commit(next: Game, turns?: Turn[], write?: () => Promise<void>): Promise<boolean> {
@@ -86,7 +95,7 @@ export const useGame = create<GameStore>((set, get) => {
       ? { ...g, timer: { elapsedMs: g.timer.elapsedMs + (now - (g.timer.lastResumeAt ?? now)), running: false } }
       : g;
 
-  return {
+  const actions: GameStore = {
     ready: false,
     turns: [],
     clearError: () => set({ error: undefined }),
@@ -298,6 +307,11 @@ export const useGame = create<GameStore>((set, get) => {
       set({ game: undefined, turns: [] });
     }
   };
+  for (const name of SERIAL_ACTIONS) {
+    const original = actions[name] as (...a: never[]) => Promise<unknown>;
+    (actions as unknown as Record<string, unknown>)[name] = serial(original as (...a: unknown[]) => Promise<unknown>);
+  }
+  return actions;
 });
 
 export { currentPlayer };

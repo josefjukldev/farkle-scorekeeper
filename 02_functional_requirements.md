@@ -30,11 +30,11 @@ Each requirement has an ID used in tests (`08_test_plan_and_acceptance.md`).
 |----|-------------|-----|
 | FR-300 | Turn screen header shows: player name and colour, **current banked score**, points still needed to the target (target mode) or time remaining (time mode), round number, and the minimum-to-bank status. | M |
 | FR-301 | The screen shows the **turn total** (unbanked), updated live as steps are added. | M |
-| FR-302 | Three input methods for one throw result, all producing a *step*: (a) **Quick picks** (b) **Dice-face picker** (c) **Manual number**. | M |
+| FR-302 | Two input methods for one throw result, both producing a *step*: (a) **Manual number** (the default view) and (b) **Quick picks** (secondary view, switched with a toggle). The last chosen view is remembered until the app is closed. | M |
 | FR-303 | Quick picks: buttons for the most common results: `1` (+100), `5` (+50), `1+5` (+150), `2×1` (+200), `2×5` (+100), triples 2–6 (+200…+600), triple 1 (+1000), four 1s (+2000), straight (+1000). Quick picks are generated from the active rule set so values always match. Long-press or "x" counter allows multiples. | M |
-| FR-304 | Dice-face picker: user marks how many dice of each face (1–6) were set aside (stepper per face, total max = dice remaining). Engine computes the score and flags invalid selections (non-scoring dice present). Displays "dice used / dice remaining". | M |
-| FR-305 | Manual entry: numeric keypad, accepts multiples of 50 only (configurable), range 50–20 000 per step. Manual steps do not consume a known number of dice (user may optionally specify dice used for hot-dice tracking; default "unknown"). | M |
-| FR-306 | After adding a step, user chooses **Roll again** (stay in the turn, with the number of dice remaining shown) or **Bank**. | M |
+| FR-304 | ~~Dice-face picker~~ **Removed** (owner decision). Dice tracking for the bank window comes from the optional "Dice used" selector in Manual entry and from Quick picks. | – |
+| FR-305 | Manual entry: calculator keypad (digits, 00, delete) and an **Add step** button; no +50 / +100 shortcuts. Accepts multiples of 50 only (configurable), range 50–20 000 per step. An optional "Dice used" selector (? unknown, 1–6) feeds hot-dice and bank-window tracking; default unknown. | M |
+| FR-306 | After adding a step the player simply adds more steps (continue) or presses **Bank**. There is no separate Roll again button. | M |
 | FR-307 | **Bank** is enabled only when turn total ≥ required minimum **and** the bank window is open (FR-314). When disabled, show the reason: points missing or dice rule. | M |
 | FR-308 | **Bust (Farkle)** button is always available. It sets the turn result to 0, applies configured penalties, and passes to the next player after one confirmation tap. | M |
 | FR-309 | **Hot dice**: when the dice used reach 6 (known via quick pick or dice-face picker), show a "Hot dice – take all 6 dice" banner and reset dice remaining to 6; the turn continues. For manual steps the user can press "Hot dice" manually. | M |

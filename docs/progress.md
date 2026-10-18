@@ -12,8 +12,8 @@ Legend: [x] done and covered by an automated test or check, [~] done in the prot
 - [~] M6 Settings, i18n, backup, PWA, accessibility (see gaps)
 
 ## Quality checks run on this prototype
-- Unit tests: 99 passing (engine, review, storage, backup, i18n keys and plurals).
-- E2E (Playwright, Pixel 5 profile): 16 passing, including crash recovery, offline, time mode, backup round trip, share (1080x1350 PNG, `navigator.share` mocked and fallback), location granted and denied.
+- Unit tests: 103 passing (engine, review, storage, backup, store, i18n keys and plurals).
+- E2E (Playwright, Pixel 5 profile): 22 passing, including no-scroll fit checks at four iPhone Chrome viewports, including crash recovery, offline, time mode, backup round trip, share (1080x1350 PNG, `navigator.share` mocked and fallback), location granted and denied.
 - axe (WCAG 2.1 A/AA) scans of 14 screens and sheets in light and dark: no violations.
 - Lighthouse (mobile, local preview): performance 98, accessibility 100, best practices 96. Installability is covered by the manifest and service worker, not by Lighthouse 12 (no PWA category).
 - First load: 449 KB JS, 139 KB gzipped.
@@ -51,6 +51,13 @@ Legend: [x] done and covered by an automated test or check, [~] done in the prot
 - [x] FR-706 accessibility (axe clean; touch targets 48 px)
 - [x] FR-800..802 storage error banner with retry and export, error boundary
 
+## Change round 2 (owner requests)
+- Turn screen: Manual entry is the default view, Quick picks is the secondary view (toggle, remembered until the app closes).
+- Dice picker removed completely (code, strings, tests). Manual entry keeps the calculator keypad without +50 / +100.
+- No separate Roll again button; the Bank button shows why it is disabled.
+- Fit to screen: all primary screens fit iPhone Chrome viewports without scrolling (375x540 up to 430x780), checked by `tests/e2e/fit.spec.ts`. New game is now two steps. On the smallest phones controls are 44 px (the spec's 48 px minimum applies from about 700 px height).
+- Trade-off to know: in Manual entry the dice count is optional. When it is left as "?", the app cannot enforce the "2 or fewer dice left" bank rule for that step (it treats the bank window as open).
+
 ## Deviations from the design package (all deliberate)
 - **Styling:** plain CSS with variables (`src/styles.css`) instead of Tailwind. No ESLint or Prettier yet.
 - **RuleSet:** `endMode` and `targetScore` are not in `RuleSet`. The game's `endCondition` is the single source. Added `manualMax` and `bankRestriction` (replaces `twoDiceRule`).
@@ -74,3 +81,6 @@ Legend: [x] done and covered by an automated test or check, [~] done in the prot
 - Bank window default `atMostTwoOrHot`: bank with 2 or fewer dice left (1 die allowed) or after hot dice.
 - Brand: blue primary, gray secondary, light gray and white backgrounds, black or white text. No custom domain for now.
 - GitHub Pages deploy is a manual workflow (`deploy.yml`) until the app goes public.
+
+## Bug found and fixed in change round 2
+- Fast double taps could lose a step: store actions read the game, then wrote it back asynchronously. Actions now run one after another (`serial` queue in `src/state/gameStore.ts`), covered by `tests/unit/store.test.ts`.

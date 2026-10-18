@@ -1,4 +1,8 @@
 export const cs: Record<string, string> = {
+  'turn.modeLabel': 'Způsob zadání', 'turn.modeManual': 'Ručně', 'turn.modeQuick': 'Rychlé volby', 'turn.steps': 'Kroky v tomto kole',
+  'turn.bankEmpty': 'Nejdřív přidejte body', 'turn.bankMissing': 'Chybí {n} bodů', 'turn.bankNeeds': 'Potřeba: {rule}', 'turn.bankHot': 'Všechny kostky bodují: zapište, nebo pokračujte',
+  'manual.value': 'Body k přidání', 'manual.multipleOf': 'násobek {m}', 'manual.diceShort': 'Kostky',
+  'new.next': 'Další', 'new.step': 'Krok {n} ze 2', 'final.logShort': 'Historie kol',
   'common.back': 'Zpět', 'common.cancel': 'Zrušit', 'common.close': 'Zavřít', 'common.save': 'Uložit',
   'nav.main': 'Hlavní nabídka', 'nav.home': 'Domů', 'nav.archive': 'Archiv', 'nav.settings': 'Nastavení',
 
@@ -34,18 +38,16 @@ export const cs: Record<string, string> = {
   'hand.banked': '{name} zapsal(a) +{n}', 'hand.busted': '{name} propadl(a)', 'hand.discarded': 'Kolo hráče {name} bylo zahozeno', 'hand.undoLast': 'Vrátit poslední kolo',
 
   'turn.round': '{n}. kolo', 'turn.menu': 'Nabídka hry', 'turn.score': 'Skóre', 'turn.toTarget': 'do cíle {n}', 'turn.total': 'Body v kole', 'turn.diceLeft': 'Zbývá kostek: {n}',
-  'turn.aria': '{name}, body v kole {total}, zbývá kostek: {dice}', 'turn.hot': 'Všechny kostky bodují – házejte všemi 6', 'turn.chipMin': 'Min {n}',
+  'turn.aria': '{name}, body v kole {total}, zbývá kostek: {dice}', 'turn.hot': 'Všechny kostky bodují – házejte všemi 6', 
   'turn.chipDice.atMostTwoOrHot': '2 nebo méně kostek', 'turn.chipDice.exactlyTwoOrHot': 'Přesně 2 kostky',
-  'turn.hintStart': 'Začněte přidáním toho, co jste odložili.', 'turn.missing': 'Do zápisu chybí {n} bodů.', 'turn.diceRule': 'K zápisu musí zbývat 2 nebo méně kostek, nebo všechny kostky bodují.',
-  'turn.hintHot': 'Zapište, nebo házejte znovu všemi 6.', 'turn.hintReady': 'Můžete zapsat, nebo hodit znovu.', 'turn.noSteps': 'Zatím žádný krok. Klepněte na to, co jste odložili.',
-  'turn.undo': 'Zpět', 'turn.quick': 'Rychlé volby', 'turn.straight': 'Postupka', 'turn.dicePicker': 'Výběr kostek', 'turn.manual': 'Ručně…', 'turn.forceHot': 'Bodovalo všech šest kostek',
-  'turn.bust': 'PROPADLO', 'turn.rollAgain': 'HODIT ZNOVU', 'turn.bank': 'ZAPSAT +{n}', 'turn.throwAll': 'Házejte všemi 6 kostkami.', 'turn.throwN': 'Házejte zbývajícími {n} kostkami.',
+  
+  'turn.noSteps': 'Zatím žádný krok. Klepněte na to, co jste odložili.',
+  'turn.undo': 'Zpět', 'turn.quick': 'Rychlé volby', 'turn.straight': 'Postupka', 'turn.forceHot': 'Bodovalo všech 6',
+  'turn.bust': 'PROPADLO', 'turn.bank': 'ZAPSAT +{n}', 
   'turn.rules': 'Pravidla', 'turn.exit': 'Zpět domů (hra běží dál)', 'turn.endNow': 'Ukončit hru', 'turn.endTitle': 'Ukončit hru teď?', 'turn.endBody': 'Hra skončí s dosud zapsanými body. Nedokončené kolo se zahodí.',
   'turn.finalBanner': 'Poslední kolo – překonejte {n}!', 'turn.timeUp': 'Čas vypršel – dohrajte toto kolo.',
   'timer.label': 'Zbývá {time}', 'timer.up': 'Čas vypršel', 'timer.paused': 'pozastaveno', 'timer.pause': 'Pozastavit', 'timer.resume': 'Pokračovat',
 
-  'dice.title': 'Výběr kostek', 'dice.less': 'Méně kostek s {f}', 'dice.more': 'Více kostek s {f}', 'dice.count': '{n} kostek s hodnotou {f}', 'dice.used': 'Použito kostek {u}/{r}', 'dice.add': 'Přidat krok',
-  'dice.dead': 'Kostka s hodnotou {f} nebodují.', 'dice.invalid': 'Tento výběr není platný.',
   'manual.title': 'Ruční zadání', 'manual.invalid': 'Použijte násobek {m} do {max}.', 'manual.delete': 'Smazat', 'manual.dice': 'Použité kostky (volitelné)', 'manual.unknown': 'Neznámé', 'manual.add': 'Přidat krok',
 
   'confirm.title': 'Potvrdit kolo', 'confirm.banks': '{name} zapisuje', 'confirm.busts': '{name} propadá', 'confirm.lost': 'ztraceno {n}', 'confirm.penalty': 'Trest za propadnutí: −{n}',

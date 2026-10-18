@@ -36,6 +36,7 @@ export function NewGame() {
   const [editRules, setEditRules] = useState(false);
   const [touched, setTouched] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [step, setStep] = useState<1 | 2>(1);
 
   useEffect(() => {
     (async () => {
@@ -54,7 +55,8 @@ export function NewGame() {
   const nameErr = name.trim().length < 1 || name.trim().length > 60;
   const playerErrs = useMemo(() => validatePlayerNames(players), [players]);
   const endErrs = validateEnd(end, rules);
-  const valid = !nameErr && playerErrs.length === 0 && endErrs.length === 0;
+  const step1Ok = !nameErr && playerErrs.length === 0;
+  const valid = step1Ok && endErrs.length === 0;
   const allRules = [...BUILT_IN_PRESETS, ...presets.map((p) => p.rules)];
 
   const setPlayer = (i: number, v: string) => setPlayers((p) => p.map((x, k) => (k === i ? v : x)));
@@ -96,10 +98,14 @@ export function NewGame() {
   return (
     <div className="screen">
       <header className="app-head">
-        <BackButton href="#/" label={t('common.back')} />
-        <h1>{t('new.title')}</h1>
+        {step === 1
+          ? <BackButton href="#/" label={t('common.back')} />
+          : <button type="button" className="icon-btn back" aria-label={t('common.back')} onClick={() => setStep(1)}>‹</button>}
+        <h1 className="grow">{t('new.title')}</h1>
+        <span className="muted small">{t('new.step', { n: step })}</span>
       </header>
       <main className="content">
+        {step === 1 && (<>
         <label className="field">
           <span className="eyebrow">{t('new.name')}</span>
           <input value={name} maxLength={60} onChange={(e) => setName(e.target.value)} aria-invalid={touched && nameErr} />
@@ -111,7 +117,7 @@ export function NewGame() {
             <h2 className="eyebrow">{t('new.players', { n: players.length })}</h2>
             <button type="button" className="link-btn" onClick={shuffle}>{t('new.shuffle')}</button>
           </div>
-          <div className="list tight">
+          <div className="list tight players">
             {players.map((p, i) => (
               <div key={i}>
                 <div className="row gap">
@@ -133,7 +139,9 @@ export function NewGame() {
           </div>
           {touched && playerErrs.includes('player-count') && <small className="err">{t('new.errCount')}</small>}
         </section>
+        </>)}
 
+        {step === 2 && (<>
         <section>
           <h2 className="eyebrow">{t('new.ends')}</h2>
           <Segmented value={mode} label={t('new.ends')} options={[{ value: 'target', label: t('new.target') }, { value: 'time', label: t('new.time') }]} onChange={(m) => { setMode(m); setCustom(false); }} />
@@ -152,7 +160,7 @@ export function NewGame() {
             </label>
           )}
           {endErrs.length > 0 && <small className="err">{mode === 'target' ? t('new.errTarget') : t('new.errTime')}</small>}
-          <p className="muted small">{mode === 'target' ? t('new.noteTarget', { n: f.n(target) }) : t('new.noteTime', { n: minutes })}</p>
+          <p className="muted small hide-short">{mode === 'target' ? t('new.noteTarget', { n: f.n(target) }) : t('new.noteTime', { n: minutes })}</p>
         </section>
 
         <section>
@@ -165,7 +173,7 @@ export function NewGame() {
             </select>
             <button type="button" className="btn btn-outline small-btn" onClick={() => setEditRules(true)}>{t('new.edit')}</button>
           </div>
-          <p className="muted small">{t('new.rulesSummary', { min: rules.minBank, dice: t('new.dice.' + rules.bankRestriction) })}</p>
+          <p className="muted small hide-short">{t('new.rulesSummary', { min: rules.minBank, dice: t('new.dice.' + rules.bankRestriction) })}</p>
         </section>
 
         <section>
@@ -176,9 +184,12 @@ export function NewGame() {
               <input value={place} maxLength={40} onChange={(e) => setPlace(e.target.value)} /></label>
           )}
         </section>
+        </>)}
       </main>
       <div className="action-bar single">
-        <button type="button" className="btn btn-primary big-btn" disabled={!valid || busy} onClick={start} onMouseDown={() => setTouched(true)}>{t('new.start')}</button>
+        {step === 1
+          ? <button type="button" className="btn btn-primary big-btn" disabled={!step1Ok} onClick={() => setStep(2)} onMouseDown={() => setTouched(true)}>{t('new.next')}</button>
+          : <button type="button" className="btn btn-primary big-btn" disabled={!valid || busy} onClick={start}>{t('new.start')}</button>}
       </div>
       {editRules && (
         <RulesEditor rules={rules} onClose={() => setEditRules(false)}

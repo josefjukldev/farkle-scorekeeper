@@ -52,8 +52,8 @@ export function Home() {
             <h2 className="eyebrow">{t('home.recent')}</h2>
             {recent.length > 0 && <a href="#/archive" className="link">{t('home.seeAll')}</a>}
           </div>
-          {recent.length === 0 && <p className="muted">{t('archive.empty')}</p>}
-          <div className="list">
+          {recent.length === 0 && <p className="muted hide-mid">{t('archive.empty')}</p>}
+          <div className="list recent">
             {recent.map((g) => {
               const w = g.players.find((p) => p.playerId === g.result?.winnerIds[0]);
               return (

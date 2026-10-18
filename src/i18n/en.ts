@@ -1,4 +1,8 @@
 export const en: Record<string, string> = {
+  'turn.modeLabel': 'Entry mode', 'turn.modeManual': 'Manual', 'turn.modeQuick': 'Quick picks', 'turn.steps': 'Steps this turn',
+  'turn.bankEmpty': 'Add points first', 'turn.bankMissing': '{n} points missing', 'turn.bankNeeds': 'Needs {rule}', 'turn.bankHot': 'Hot dice: bank or keep going',
+  'manual.value': 'Points to add', 'manual.multipleOf': 'multiple of {m}', 'manual.diceShort': 'Dice',
+  'new.next': 'Next', 'new.step': 'Step {n} of 2', 'final.logShort': 'Turn log',
   'common.back': 'Back', 'common.cancel': 'Cancel', 'common.close': 'Close', 'common.save': 'Save',
   'nav.main': 'Main', 'nav.home': 'Home', 'nav.archive': 'Archive', 'nav.settings': 'Settings',
 
@@ -34,18 +38,16 @@ export const en: Record<string, string> = {
   'hand.banked': '{name} banked +{n}', 'hand.busted': '{name} busted', 'hand.discarded': '{name}’s turn was discarded', 'hand.undoLast': 'Undo last turn',
 
   'turn.round': 'Round {n}', 'turn.menu': 'Game menu', 'turn.score': 'Score', 'turn.toTarget': 'to target {n}', 'turn.total': 'Turn total', 'turn.diceLeft': 'Dice left: {n}',
-  'turn.aria': '{name}, turn total {total}, {dice} dice left', 'turn.hot': 'Hot dice – take all 6 dice', 'turn.chipMin': 'Min {n}',
+  'turn.aria': '{name}, turn total {total}, {dice} dice left', 'turn.hot': 'Hot dice – take all 6 dice', 
   'turn.chipDice.atMostTwoOrHot': '2 or fewer dice', 'turn.chipDice.exactlyTwoOrHot': 'Exactly 2 dice',
-  'turn.hintStart': 'Start by adding what you set aside.', 'turn.missing': '{n} points missing to bank.', 'turn.diceRule': 'Bank needs 2 or fewer dice left, or hot dice.',
-  'turn.hintHot': 'Bank now, or throw all 6 dice again.', 'turn.hintReady': 'Ready to bank, or roll again.', 'turn.noSteps': 'No steps yet. Tap what you set aside.',
-  'turn.undo': 'Undo', 'turn.quick': 'Quick picks', 'turn.straight': 'Straight', 'turn.dicePicker': 'Dice picker', 'turn.manual': 'Manual…', 'turn.forceHot': 'All six dice scored (hot dice)',
-  'turn.bust': 'BUST', 'turn.rollAgain': 'ROLL AGAIN', 'turn.bank': 'BANK +{n}', 'turn.throwAll': 'Throw all 6 dice.', 'turn.throwN': 'Throw the {n} remaining dice.',
+  
+  'turn.noSteps': 'No steps yet. Tap what you set aside.',
+  'turn.undo': 'Undo', 'turn.quick': 'Quick picks', 'turn.straight': 'Straight', 'turn.forceHot': 'All 6 scored',
+  'turn.bust': 'BUST', 'turn.bank': 'BANK +{n}', 
   'turn.rules': 'Rules', 'turn.exit': 'Exit to Home (game keeps running)', 'turn.endNow': 'End game now', 'turn.endTitle': 'End the game now?', 'turn.endBody': 'The game ends with the scores banked so far. An unfinished turn is dropped.',
   'turn.finalBanner': 'Final round – beat {n}!', 'turn.timeUp': 'Time is up – finish this turn.',
   'timer.label': 'Time left {time}', 'timer.up': 'Time is up', 'timer.paused': 'paused', 'timer.pause': 'Pause', 'timer.resume': 'Resume',
 
-  'dice.title': 'Dice picker', 'dice.less': 'Fewer {f}s', 'dice.more': 'More {f}s', 'dice.count': '{n} dice showing {f}', 'dice.used': 'Dice used {u}/{r}', 'dice.add': 'Add step',
-  'dice.dead': 'A die showing {f} does not score.', 'dice.invalid': 'This selection is not valid.',
   'manual.title': 'Manual entry', 'manual.invalid': 'Use a multiple of {m} up to {max}.', 'manual.delete': 'Delete', 'manual.dice': 'Dice used (optional)', 'manual.unknown': 'Unknown', 'manual.add': 'Add step',
 
   'confirm.title': 'Confirm turn', 'confirm.banks': '{name} banks', 'confirm.busts': '{name} busts', 'confirm.lost': '{n} lost', 'confirm.penalty': 'Bust penalty: −{n}',

@@ -40,7 +40,7 @@ export function Board() {
       <div className="pad-x"><Segmented value={tab} label={t('board.title')} options={[{ value: 'board', label: t('board.title') }, { value: 'history', label: t('board.history') }]} onChange={setTab} /></div>
       <main className="content">
         {tab === 'board' && (
-          <div className="list">
+          <div className={'list' + (rows.length > 5 ? ' dense' : '')}>
             {rows.map((r, i) => {
               const rank = rows.findIndex((x) => x.score === r.score) + 1;
               const left = toTarget(game, r.score);
@@ -57,7 +57,7 @@ export function Board() {
                 </div>
               );
             })}
-            <p className="muted small">{t('board.ties')}</p>
+            <p className="muted small small-note">{t('board.ties')}</p>
           </div>
         )}
         {tab === 'history' && (

@@ -23,10 +23,10 @@ export async function startGame(page: Page, names: string[], opts: { target?: nu
     if ((await inputs.count()) <= i) await page.getByRole('button', { name: /Add player|Přidat hráče/ }).click();
     await inputs.nth(i).fill(names[i]);
   }
+  await page.getByRole('button', { name: /^Next$|^Další$/ }).click();
   if (opts.target) {
     await page.getByRole('button', { name: /^Custom$|^Vlastní$/ }).click();
-    const num = page.locator('input[inputmode="numeric"]');
-    await num.fill(String(opts.target));
+    await page.locator('input[inputmode="numeric"]').fill(String(opts.target));
   }
   if (opts.minutes) {
     await page.getByRole('button', { name: /Time limit|Časový limit/ }).click();
@@ -38,10 +38,12 @@ export async function startGame(page: Page, names: string[], opts: { target?: nu
 }
 
 export const startTurn = (page: Page) => page.getByRole('button', { name: /Start turn|Začít kolo/ }).click();
+export const quick = (page: Page) => page.getByRole('button', { name: /^Quick picks$|^Rychlé volby$/ }).click();
 
 /** Plays a banked turn of exactly `total` points using 3x4 (400) + 1 (100) style picks. */
 export async function bankTurn(page: Page, picks: string[]) {
   await startTurn(page);
+  await quick(page);
   for (const p of picks) await page.getByRole('button', { name: new RegExp(`^${p.replace(/[+×]/g, (c) => '\\' + c)} \\+`) }).click();
   await page.getByRole('button', { name: /^BANK/ }).click();
   await page.getByRole('button', { name: /Confirm & pass/ }).click();
