@@ -14,15 +14,48 @@ export interface ShareLabels {
 export type ShareTheme = 'light' | 'dark' | 'colourful';
 
 const THEMES = {
-  light: { bg: '#F2F4F7', surface: '#FFFFFF', text: '#111418', muted: '#5B636E', border: '#D8DDE4', primary: '#1D5FD6', onPrimary: '#FFFFFF', gray: '#6B7480' },
-  dark: { bg: '#14171C', surface: '#1E232B', text: '#FFFFFF', muted: '#A8B0BB', border: '#333A44', primary: '#5B9BFF', onPrimary: '#0B0E12', gray: '#3A414C' },
-  colourful: { bg: '#0F3D99', surface: '#FFFFFF', text: '#111418', muted: '#4A525D', border: '#C9D6F2', primary: '#F2C94C', onPrimary: '#111418', gray: '#7FB6F5' }
+  light: {
+    bg: '#F2F4F7',
+    surface: '#FFFFFF',
+    text: '#111418',
+    muted: '#5B636E',
+    border: '#D8DDE4',
+    primary: '#1D5FD6',
+    onPrimary: '#FFFFFF',
+    gray: '#6B7480'
+  },
+  dark: {
+    bg: '#14171C',
+    surface: '#1E232B',
+    text: '#FFFFFF',
+    muted: '#A8B0BB',
+    border: '#333A44',
+    primary: '#5B9BFF',
+    onPrimary: '#0B0E12',
+    gray: '#3A414C'
+  },
+  colourful: {
+    bg: '#0F3D99',
+    surface: '#FFFFFF',
+    text: '#111418',
+    muted: '#4A525D',
+    border: '#C9D6F2',
+    primary: '#F2C94C',
+    onPrimary: '#111418',
+    gray: '#7FB6F5'
+  }
 } as const;
 
 function shapePath(ctx: CanvasRenderingContext2D, clip: string, x: number, y: number, s: number) {
   ctx.beginPath();
-  if (clip.startsWith('circle')) { ctx.arc(x + s / 2, y + s / 2, s / 2, 0, Math.PI * 2); return; }
-  if (clip.startsWith('inset')) { ctx.roundRect(x + s * 0.06, y + s * 0.06, s * 0.88, s * 0.88, s * 0.2); return; }
+  if (clip.startsWith('circle')) {
+    ctx.arc(x + s / 2, y + s / 2, s / 2, 0, Math.PI * 2);
+    return;
+  }
+  if (clip.startsWith('inset')) {
+    ctx.roundRect(x + s * 0.06, y + s * 0.06, s * 0.88, s * 0.88, s * 0.2);
+    return;
+  }
   const pts = [...clip.matchAll(/(-?[\d.]+)%?\s+(-?[\d.]+)%?(?=,|\))/g)].map((m) => [Number(m[1]) / 100, Number(m[2]) / 100]);
   pts.forEach(([px, py], i) => (i ? ctx.lineTo(x + px * s, y + py * s) : ctx.moveTo(x + px * s, y + py * s)));
   ctx.closePath();
@@ -67,9 +100,21 @@ export function drawShare(canvas: HTMLCanvasElement, game: Game, L: ShareLabels,
   ctx.fillRect(0, 0, w, 290);
   ctx.strokeStyle = bandFg;
   ctx.lineWidth = 4;
-  ctx.beginPath(); ctx.roundRect(66, 48, 44, 44, 10); ctx.stroke();
+  ctx.beginPath();
+  ctx.roundRect(66, 48, 44, 44, 10);
+  ctx.stroke();
   ctx.fillStyle = bandFg;
-  for (const [cx, cy] of [[78, 60], [98, 60], [88, 70], [78, 80], [98, 80]]) { ctx.beginPath(); ctx.arc(cx, cy, 3.4, 0, Math.PI * 2); ctx.fill(); }
+  for (const [cx, cy] of [
+    [78, 60],
+    [98, 60],
+    [88, 70],
+    [78, 80],
+    [98, 80]
+  ]) {
+    ctx.beginPath();
+    ctx.arc(cx, cy, 3.4, 0, Math.PI * 2);
+    ctx.fill();
+  }
   ctx.textAlign = 'left';
   ctx.textBaseline = 'alphabetic';
   ctx.font = font(800, 30);
@@ -101,7 +146,9 @@ export function drawShare(canvas: HTMLCanvasElement, game: Game, L: ShareLabels,
     ctx.font = font(700, 28);
     ctx.fillText(r.score, cx, baseY - barH + 4);
     ctx.fillStyle = place === 1 ? T.primary : T.gray;
-    ctx.beginPath(); ctx.roundRect(cx - colW / 2, baseY - barH + 16, colW, barH - 16, [18, 18, 0, 0]); ctx.fill();
+    ctx.beginPath();
+    ctx.roundRect(cx - colW / 2, baseY - barH + 16, colW, barH - 16, [18, 18, 0, 0]);
+    ctx.fill();
     ctx.fillStyle = place === 1 ? T.onPrimary : '#FFFFFF';
     ctx.font = font(800, 52);
     ctx.fillText(r.rank, cx, baseY - barH + 80);
@@ -119,7 +166,10 @@ export function drawShare(canvas: HTMLCanvasElement, game: Game, L: ShareLabels,
     const y = listTop + i * rowH;
     ctx.strokeStyle = T.border;
     ctx.lineWidth = 1;
-    ctx.beginPath(); ctx.moveTo(64, y + rowH); ctx.lineTo(w - 64, y + rowH); ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(64, y + rowH);
+    ctx.lineTo(w - 64, y + rowH);
+    ctx.stroke();
     ctx.textAlign = 'left';
     ctx.fillStyle = '#5B636E';
     ctx.font = font(800, 32);
@@ -146,7 +196,9 @@ export function drawShare(canvas: HTMLCanvasElement, game: Game, L: ShareLabels,
     const x = 64 + i * (aw + 20);
     ctx.fillStyle = T.surface;
     const ah = rows.length > 5 ? 120 : 140;
-    ctx.beginPath(); ctx.roundRect(x, aTop, aw, ah, 18); ctx.fill();
+    ctx.beginPath();
+    ctx.roundRect(x, aTop, aw, ah, 18);
+    ctx.fill();
     ctx.textAlign = 'left';
     ctx.fillStyle = '#5B636E';
     ctx.font = font(700, 18);

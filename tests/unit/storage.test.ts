@@ -11,7 +11,15 @@ let n = 0;
 beforeEach(() => useDatabase(new FarkleDb('test-' + n++)));
 
 const fixture = (id: string) =>
-  buildGame(['Ann', 'Bob'], [{ p: 0, kind: 'bank', total: 500 }, { p: 1, kind: 'bust', total: 200 }, { p: 0, kind: 'bank', total: 400 }], { id });
+  buildGame(
+    ['Ann', 'Bob'],
+    [
+      { p: 0, kind: 'bank', total: 500 },
+      { p: 1, kind: 'bust', total: 200 },
+      { p: 0, kind: 'bank', total: 400 }
+    ],
+    { id }
+  );
 
 describe('repository', () => {
   it('create, resume and forget', async () => {
@@ -28,7 +36,23 @@ describe('repository', () => {
 
   it('keeps activeTurn so a half-entered turn survives a reload', async () => {
     const { game } = fixture('g2');
-    const withDraft = { ...game, status: 'inProgress' as const, activeTurn: { playerId: 'p0', started: true, startedAt: 5, turn: { steps: [{ id: 'x', points: 300, source: 'quick' as const, diceUsed: 3, at: 1 }], history: [], diceRemaining: 3, diceKnown: true, hotDicePending: false, hotDiceCount: 0 } } };
+    const withDraft = {
+      ...game,
+      status: 'inProgress' as const,
+      activeTurn: {
+        playerId: 'p0',
+        started: true,
+        startedAt: 5,
+        turn: {
+          steps: [{ id: 'x', points: 300, source: 'quick' as const, diceUsed: 3, at: 1 }],
+          history: [],
+          diceRemaining: 3,
+          diceKnown: true,
+          hotDicePending: false,
+          hotDiceCount: 0
+        }
+      }
+    };
     await repo.saveGame(withDraft);
     const loaded = await repo.getActiveGame();
     expect(loaded?.activeTurn?.turn.steps[0].points).toBe(300);
@@ -119,7 +143,15 @@ describe('backup', () => {
   });
 
   it('counts invalid games', async () => {
-    const text = JSON.stringify({ app: 'farkle-scorekeeper', schemaVersion: 1, exportedAt: 1, games: [{ id: 'x' }], turns: [], players: [], presets: [] });
+    const text = JSON.stringify({
+      app: 'farkle-scorekeeper',
+      schemaVersion: 1,
+      exportedAt: 1,
+      games: [{ id: 'x' }],
+      turns: [],
+      players: [],
+      presets: []
+    });
     expect(await importAll(text, false)).toMatchObject({ ok: true, invalidGames: 1, newGames: 0 });
   });
 

@@ -143,7 +143,8 @@ describe('time mode and manual end', () => {
 describe('ranking', () => {
   const row = (playerId: string, score: number) => ({ playerId, score, turns: 1, busts: 0, bestTurn: 0 });
   it('distinct scores', () => expect(rankPlayers([row('a', 1), row('b', 3), row('c', 2)]).map((r) => r.rank)).toEqual([1, 2, 3]));
-  it('ties share a rank (1, 1, 3)', () => expect(rankPlayers([row('a', 5), row('b', 5), row('c', 1)]).map((r) => r.rank)).toEqual([1, 1, 3]));
+  it('ties share a rank (1, 1, 3)', () =>
+    expect(rankPlayers([row('a', 5), row('b', 5), row('c', 1)]).map((r) => r.rank)).toEqual([1, 1, 3]));
   it('all zero is a full tie', () => expect(rankPlayers([row('a', 0), row('b', 0)]).map((r) => r.rank)).toEqual([1, 1]));
   it('finalRanking counts turns, busts and best', () => {
     let g = target(10000);
@@ -166,11 +167,17 @@ describe('replay (editing past turns)', () => {
       { playerId: 'b', kind: 'bust', total: 100 },
       { playerId: 'c', kind: 'banked', total: 350 }
     ];
-    const first = replay(base, inputs.map((input) => ({ input })));
+    const first = replay(
+      base,
+      inputs.map((input) => ({ input }))
+    );
     expect(first.core.scores).toEqual({ a: 500, b: 0, c: 350 });
     const edited = [...inputs];
     edited[1] = { playerId: 'b', kind: 'banked', total: 600 };
-    const second = replay(base, edited.map((input) => ({ input })));
+    const second = replay(
+      base,
+      edited.map((input) => ({ input }))
+    );
     expect(second.core.scores.b).toBe(600);
     expect(second.outcomes[1].scoreAfter).toBe(600);
   });
@@ -198,7 +205,11 @@ describe('validation and quick picks', () => {
     expect(validatePlayerNames(['Ann'])).toContain('player-count');
   });
   it('quick picks equal scoreSelection for every preset', () => {
-    for (const r of [HOUSE_RULES, { ...HOUSE_RULES, nOfKindMode: 'doubling' as const, straight: 1500 }, { ...HOUSE_RULES, straight: null }]) {
+    for (const r of [
+      HOUSE_RULES,
+      { ...HOUSE_RULES, nOfKindMode: 'doubling' as const, straight: 1500 },
+      { ...HOUSE_RULES, straight: null }
+    ]) {
       for (const q of quickPicks(r)) {
         const s = scoreSelection(q.counts, r);
         expect(s).toEqual({ valid: true, points: q.points, diceUsed: q.diceUsed });

@@ -45,7 +45,14 @@ describe('rule variations', () => {
     const r: RuleSet = {
       ...HOUSE_RULES,
       nOfKindMode: 'table',
-      nOfKindTable: { 1: { four: 2000, five: 3000, six: 5000 }, 2: { four: 300, five: 500, six: 700 }, 3: { four: 0, five: 0, six: 0 }, 4: { four: 0, five: 0, six: 0 }, 5: { four: 0, five: 0, six: 0 }, 6: { four: 0, five: 0, six: 0 } }
+      nOfKindTable: {
+        1: { four: 2000, five: 3000, six: 5000 },
+        2: { four: 300, five: 500, six: 700 },
+        3: { four: 0, five: 0, six: 0 },
+        4: { four: 0, five: 0, six: 0 },
+        5: { four: 0, five: 0, six: 0 },
+        6: { four: 0, five: 0, six: 0 }
+      }
     };
     expect(pts({ 2: 5 }, r)).toEqual([500, 5]);
     expect(pts({ 1: 6 }, r)).toEqual([5000, 6]);

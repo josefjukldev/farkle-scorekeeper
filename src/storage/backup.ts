@@ -20,7 +20,10 @@ function parseBackup(json: unknown): Backup | undefined {
   const v = b.schemaVersion;
   const ok =
     b.app === 'farkle-scorekeeper' &&
-    typeof v === 'number' && Number.isInteger(v) && v >= 1 && v <= SCHEMA_VERSION &&
+    typeof v === 'number' &&
+    Number.isInteger(v) &&
+    v >= 1 &&
+    v <= SCHEMA_VERSION &&
     typeof b.exportedAt === 'number' &&
     [b.games, b.turns, b.players, b.presets].every(Array.isArray);
   return ok ? (b as unknown as Backup) : undefined;
@@ -44,9 +47,7 @@ export async function exportAll(opts: { excludeLocation?: boolean } = {}): Promi
     db.presets.toArray()
   ]);
   const ids = new Set(games.map((g) => g.id));
-  const outGames = opts.excludeLocation
-    ? games.map((g) => ({ ...g, location: undefined, placeLabel: undefined }))
-    : games;
+  const outGames = opts.excludeLocation ? games.map((g) => ({ ...g, location: undefined, placeLabel: undefined })) : games;
   const data = {
     app: 'farkle-scorekeeper',
     schemaVersion: SCHEMA_VERSION,
@@ -60,7 +61,13 @@ export async function exportAll(opts: { excludeLocation?: boolean } = {}): Promi
 }
 
 const emptyReport = (error?: string): ImportReport => ({
-  ok: !error, error, newGames: 0, existingGames: 0, invalidGames: 0, newPlayers: 0, newPresets: 0
+  ok: !error,
+  error,
+  newGames: 0,
+  existingGames: 0,
+  invalidGames: 0,
+  newPlayers: 0,
+  newPresets: 0
 });
 
 /** Validates a backup and merges it by id. With commit=false nothing is written (preview). Never deletes data. */

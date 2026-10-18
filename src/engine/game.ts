@@ -83,8 +83,7 @@ function startFinalRound(g: GameCore, triggerId: Id): GameCore {
   const n = g.players.length;
   const t = g.players.findIndex((p) => p.id === triggerId);
   const order = Array.from({ length: n - 1 }, (_, k) => g.players[(t + 1 + k) % n].id);
-  const remaining =
-    mode === 'oneMoreTurnEach' ? order : order.filter((id) => g.turnsPlayed[id] < g.turnsPlayed[triggerId]);
+  const remaining = mode === 'oneMoreTurnEach' ? order : order.filter((id) => g.turnsPlayed[id] < g.turnsPlayed[triggerId]);
   if (remaining.length === 0) return { ...g, status: 'finishedPending', finalRound: { triggeredBy: triggerId, remaining } };
   const first = g.players.findIndex((p) => p.id === remaining[0]);
   return {
@@ -144,8 +143,7 @@ export function applyTurn(g: GameCore, input: TurnInput, opts: { timeUp?: boolea
     turnCount: g.turnCount + 1
   };
 
-  const triggered =
-    g.status === 'inProgress' && g.end.type === 'target' && input.kind === 'banked' && after >= g.end.targetScore;
+  const triggered = g.status === 'inProgress' && g.end.type === 'target' && input.kind === 'banked' && after >= g.end.targetScore;
 
   if (opts.timeUp) {
     next = { ...next, status: 'finishedPending' };

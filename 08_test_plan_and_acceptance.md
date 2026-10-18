@@ -43,7 +43,7 @@ Create / resume / forget / archive; transaction atomicity (forget deletes turns)
 - [ ] Date/time and optional location stored (FR-206, FR-207)
 ### Play
 - [ ] Turn header shows current score and turn total (FR-300, FR-301)
-- [ ] Quick picks, dice picker, manual entry all work (FR-302…305)
+- [ ] Manual entry and quick picks work (FR-302, FR-305)
 - [ ] Bank minimum, bust, hot dice, undo (FR-307…310)
 - [ ] Hand-over and confirmation steps (FR-311, FR-312)
 - [ ] Live scoreboard and history, timer with pause (FR-400…402)

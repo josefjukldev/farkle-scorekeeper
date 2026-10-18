@@ -13,7 +13,12 @@ import { ShareDialog } from './ShareDialog';
 export function reviewText(lang: 'en' | 'cs', review: GameReview, playerId: string, name: (id: string) => string) {
   const a = review.players[playerId];
   const tr = (k: string, p?: Record<string, string | number>) => translate(lang, k, p);
-  return { name: tr(`style.${a.style}.name`), tag: a.tag ? tr(`tag.${a.tag}`) : undefined, text: tr(`style.${a.style}.fb.${a.variant}`, a.params), who: name(playerId) };
+  return {
+    name: tr(`style.${a.style}.name`),
+    tag: a.tag ? tr(`tag.${a.tag}`) : undefined,
+    text: tr(`style.${a.style}.fb.${a.variant}`, a.params),
+    who: name(playerId)
+  };
 }
 
 export function GameDetail({ id }: { id: string }) {
@@ -26,16 +31,32 @@ export function GameDetail({ id }: { id: string }) {
   const [sheet, setSheet] = useState<'share' | 'rename' | 'delete' | null>(null);
   const [name, setName] = useState('');
 
-  const load = async () => {
-    const g = await getGame(id);
-    setGame(g ?? null);
-    if (g) { setTurns(await getTurns(id)); setName(g.name); }
-  };
-  useEffect(() => { void load(); }, [id]); // eslint-disable-line react-hooks/exhaustive-deps
+  const [version, setVersion] = useState(0);
+  useEffect(() => {
+    let alive = true;
+    (async () => {
+      const g = await getGame(id);
+      const ts = g ? await getTurns(id) : [];
+      if (!alive) return;
+      setGame(g ?? null);
+      setTurns(ts);
+      if (g) setName(g.name);
+    })();
+    return () => {
+      alive = false;
+    };
+  }, [id, version]);
 
   if (game === undefined) return <div className="screen" />;
   if (game === null || !game.review || !game.result) {
-    return <div className="screen"><header className="app-head"><BackButton href="#/archive" label={t('common.back')} /><h1>{t('detail.missing')}</h1></header></div>;
+    return (
+      <div className="screen">
+        <header className="app-head">
+          <BackButton href="#/archive" label={t('common.back')} />
+          <h1>{t('detail.missing')}</h1>
+        </header>
+      </div>
+    );
   }
   const review = game.review;
   const nameOf = (pid: string) => game.players.find((p) => p.playerId === pid)?.name ?? '';
@@ -43,7 +64,11 @@ export function GameDetail({ id }: { id: string }) {
   const tr = (k: string, p?: Record<string, string | number>) => translate(lang, k, p);
   const headline = tr(`headline.${review.headline.key}`, review.headline.params);
   const s = review.summary;
-  const summary = tr(s.endType === 'target' ? 'summary.target' : 'summary.time', { ...s, end: f.n(Number(s.end)), biggest: f.n(Number(s.biggest)) });
+  const summary = tr(s.endType === 'target' ? 'summary.target' : 'summary.time', {
+    ...s,
+    end: f.n(Number(s.end)),
+    biggest: f.n(Number(s.biggest))
+  });
   const ranking = game.result.ranking;
   const tieOf = (r: number) => ranking.filter((x) => x.rank === r).length > 1;
 
@@ -51,21 +76,46 @@ export function GameDetail({ id }: { id: string }) {
     <div className="screen">
       <header className="app-head">
         <BackButton href="#/archive" label={t('common.back')} />
-        <span className="grow col"><h1>{game.name}</h1><small className="muted">{f.date(game.createdAt)}{game.placeLabel ? ` · ${game.placeLabel}` : ''}</small></span>
+        <span className="grow col">
+          <h1>{game.name}</h1>
+          <small className="muted">
+            {f.date(game.createdAt)}
+            {game.placeLabel ? ` · ${game.placeLabel}` : ''}
+          </small>
+        </span>
       </header>
       <div className="row gap pad-x">
-        <button type="button" className="btn btn-primary grow" onClick={() => setSheet('share')}>{t('detail.share')}</button>
-        <button type="button" className="btn btn-outline" onClick={() => setSheet('rename')}>{t('detail.rename')}</button>
-        <button type="button" className="btn btn-danger" onClick={() => setSheet('delete')}>{t('detail.delete')}</button>
+        <button type="button" className="btn btn-primary grow" onClick={() => setSheet('share')}>
+          {t('detail.share')}
+        </button>
+        <button type="button" className="btn btn-outline" onClick={() => setSheet('rename')}>
+          {t('detail.rename')}
+        </button>
+        <button type="button" className="btn btn-danger" onClick={() => setSheet('delete')}>
+          {t('detail.delete')}
+        </button>
       </div>
       <div className="pad-x top">
-        <Segmented value={tab} label={t('detail.tabs')} cols={4} onChange={setTab}
-          options={[{ value: 'overview', label: t('detail.overview') }, { value: 'players', label: t('detail.players') }, { value: 'log', label: t('detail.log') }, { value: 'chart', label: t('detail.chart') }]} />
+        <Segmented
+          value={tab}
+          label={t('detail.tabs')}
+          cols={4}
+          onChange={setTab}
+          options={[
+            { value: 'overview', label: t('detail.overview') },
+            { value: 'players', label: t('detail.players') },
+            { value: 'log', label: t('detail.log') },
+            { value: 'chart', label: t('detail.chart') }
+          ]}
+        />
       </div>
       <main className="content">
         {tab === 'overview' && (
           <>
-            <div className="card hl"><h2 className="big">{headline}</h2><p className="muted">{summary}</p></div>
+            <div className="card hl">
+              <h2 className="big">{headline}</h2>
+              <p className="muted">{summary}</p>
+            </div>
             <div className="card flush">
               {ranking.map((r) => (
                 <div key={r.playerId} className="row gap rank-row">
@@ -81,7 +131,10 @@ export function GameDetail({ id }: { id: string }) {
               {review.awards.map((a, i) => (
                 <div key={i} className="card row gap">
                   <PlayerBadge name={nameOf(a.playerId)} seat={seatOf(a.playerId)} size={36} />
-                  <span className="grow col"><small className="eyebrow">{tr(`award.${a.key}.title`)}</small><strong>{nameOf(a.playerId)}</strong></span>
+                  <span className="grow col">
+                    <small className="eyebrow">{tr(`award.${a.key}.title`)}</small>
+                    <strong>{nameOf(a.playerId)}</strong>
+                  </span>
                   <strong className="primary">{tr(`award.${a.key}.detail`, { n: f.n(a.value) })}</strong>
                 </div>
               ))}
@@ -97,14 +150,29 @@ export function GameDetail({ id }: { id: string }) {
                 <div key={r.playerId} className="card col">
                   <div className="row gap">
                     <PlayerBadge name={rt.who} seat={seatOf(r.playerId)} size={40} />
-                    <span className="grow col"><strong>{rt.who}</strong><strong className="primary">{rt.name}{rt.tag ? ` · ${rt.tag}` : ''}</strong></span>
+                    <span className="grow col">
+                      <strong>{rt.who}</strong>
+                      <strong className="primary">
+                        {rt.name}
+                        {rt.tag ? ` · ${rt.tag}` : ''}
+                      </strong>
+                    </span>
                     <strong className="score-sm">{f.n(r.score)}</strong>
                   </div>
                   <p>{rt.text}</p>
                   <div className="grid3 stats">
-                    <div><small className="muted">{t('detail.avgBanked')}</small><strong>{f.n(Math.round(st.avgBank))}</strong></div>
-                    <div><small className="muted">{t('detail.bustRate')}</small><strong>{Math.round(st.bustRate * 100)}%</strong></div>
-                    <div><small className="muted">{t('detail.bestTurn')}</small><strong>{f.n(st.bestTurn)}</strong></div>
+                    <div>
+                      <small className="muted">{t('detail.avgBanked')}</small>
+                      <strong>{f.n(Math.round(st.avgBank))}</strong>
+                    </div>
+                    <div>
+                      <small className="muted">{t('detail.bustRate')}</small>
+                      <strong>{Math.round(st.bustRate * 100)}%</strong>
+                    </div>
+                    <div>
+                      <small className="muted">{t('detail.bestTurn')}</small>
+                      <strong>{f.n(st.bestTurn)}</strong>
+                    </div>
                   </div>
                 </div>
               );
@@ -119,7 +187,9 @@ export function GameDetail({ id }: { id: string }) {
                 <PlayerBadge name={nameOf(x.playerId)} seat={seatOf(x.playerId)} size={28} />
                 <strong className="grow">{nameOf(x.playerId)}</strong>
                 <small className="muted">{f.n(x.scoreAfter)}</small>
-                <strong className={x.result === 'banked' ? '' : 'danger'}>{x.result === 'banked' ? `+${f.n(x.turnTotal)}` : t('board.bust')}</strong>
+                <strong className={x.result === 'banked' ? '' : 'danger'}>
+                  {x.result === 'banked' ? `+${f.n(x.turnTotal)}` : t('board.bust')}
+                </strong>
               </div>
             ))}
           </div>
@@ -129,11 +199,37 @@ export function GameDetail({ id }: { id: string }) {
       {sheet === 'share' && <ShareDialog game={game} onClose={() => setSheet(null)} />}
       {sheet === 'rename' && (
         <Sheet title={t('detail.rename')} onClose={() => setSheet(null)}>
-          <label className="field"><span className="eyebrow">{t('new.name')}</span><input value={name} maxLength={60} onChange={(e) => setName(e.target.value)} /></label>
-          <button type="button" className="btn btn-primary" disabled={!name.trim()} onClick={async () => { await renameGame(game.id, name.trim()); setSheet(null); await load(); }}>{t('common.save')}</button>
+          <label className="field">
+            <span className="eyebrow">{t('new.name')}</span>
+            <input value={name} maxLength={60} onChange={(e) => setName(e.target.value)} />
+          </label>
+          <button
+            type="button"
+            className="btn btn-primary"
+            disabled={!name.trim()}
+            onClick={async () => {
+              await renameGame(game.id, name.trim());
+              setSheet(null);
+              setVersion((v) => v + 1);
+            }}
+          >
+            {t('common.save')}
+          </button>
         </Sheet>
       )}
-      {sheet === 'delete' && <ConfirmDialog title={t('detail.deleteTitle')} body={t('detail.deleteBody')} confirmLabel={t('detail.delete')} danger onCancel={() => setSheet(null)} onConfirm={async () => { await deleteArchived(game.id); navigate('archive', true); }} />}
+      {sheet === 'delete' && (
+        <ConfirmDialog
+          title={t('detail.deleteTitle')}
+          body={t('detail.deleteBody')}
+          confirmLabel={t('detail.delete')}
+          danger
+          onCancel={() => setSheet(null)}
+          onConfirm={async () => {
+            await deleteArchived(game.id);
+            navigate('archive', true);
+          }}
+        />
+      )}
     </div>
   );
 }
@@ -160,20 +256,59 @@ function ScoreChart({ game, turns }: { game: Game; turns: Turn[] }) {
     <>
       <div className="card">
         <h2 className="eyebrow">{t('detail.byRound')}</h2>
-        <svg viewBox="0 0 350 240" width="100%" role="img" aria-label={t('detail.chartAria', { list: [...game.result!.ranking].map((r) => `${game.players.find((p) => p.playerId === r.playerId)?.name} ${f.n(r.score)}`).join(', ') })}>
-          {ticks.map((v) => <g key={v}><line x1="52" x2="330" y1={Y(v)} y2={Y(v)} stroke="var(--border)" /><text x="46" y={Y(v) + 4} textAnchor="end" fontSize="11" fill="var(--muted)">{f.n(v)}</text></g>)}
-          {series.map(({ p, pts }) => (
-            <g key={p.playerId}>
-              <polyline fill="none" stroke={paletteFor(p.seat).colour} strokeWidth="3" strokeLinejoin="round" points={pts.map((v, i) => `${X(i).toFixed(1)},${Y(v).toFixed(1)}`).join(' ')} />
-              <circle cx={X(pts.length - 1)} cy={Y(pts[pts.length - 1])} r="6" fill={paletteFor(p.seat).colour} stroke="var(--surface)" strokeWidth="2" />
+        <svg
+          viewBox="0 0 350 240"
+          width="100%"
+          role="img"
+          aria-label={t('detail.chartAria', {
+            list: [...game.result!.ranking]
+              .map((r) => `${game.players.find((p) => p.playerId === r.playerId)?.name} ${f.n(r.score)}`)
+              .join(', ')
+          })}
+        >
+          {ticks.map((v) => (
+            <g key={v}>
+              <line x1="52" x2="330" y1={Y(v)} y2={Y(v)} stroke="var(--border)" />
+              <text x="46" y={Y(v) + 4} textAnchor="end" fontSize="11" fill="var(--muted)">
+                {f.n(v)}
+              </text>
             </g>
           ))}
-          <text x="52" y="226" fontSize="11" fill="var(--muted)">R1</text>
-          <text x="330" y="226" textAnchor="end" fontSize="11" fill="var(--muted)">R{rounds}</text>
+          {series.map(({ p, pts }) => (
+            <g key={p.playerId}>
+              <polyline
+                fill="none"
+                stroke={paletteFor(p.seat).colour}
+                strokeWidth="3"
+                strokeLinejoin="round"
+                points={pts.map((v, i) => `${X(i).toFixed(1)},${Y(v).toFixed(1)}`).join(' ')}
+              />
+              <circle
+                cx={X(pts.length - 1)}
+                cy={Y(pts[pts.length - 1])}
+                r="6"
+                fill={paletteFor(p.seat).colour}
+                stroke="var(--surface)"
+                strokeWidth="2"
+              />
+            </g>
+          ))}
+          <text x="52" y="226" fontSize="11" fill="var(--muted)">
+            R1
+          </text>
+          <text x="330" y="226" textAnchor="end" fontSize="11" fill="var(--muted)">
+            R{rounds}
+          </text>
         </svg>
       </div>
       <div className="grid2">
-        {series.map(({ p, pts }) => <div key={p.playerId} className="card row gap"><PlayerBadge name={p.name} seat={p.seat} size={24} /><strong className="grow">{p.name}</strong><span className="muted">{f.n(pts[pts.length - 1])}</span></div>)}
+        {series.map(({ p, pts }) => (
+          <div key={p.playerId} className="card row gap">
+            <PlayerBadge name={p.name} seat={p.seat} size={24} />
+            <strong className="grow">{p.name}</strong>
+            <span className="muted">{f.n(pts[pts.length - 1])}</span>
+          </div>
+        ))}
       </div>
     </>
   );

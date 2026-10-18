@@ -58,6 +58,29 @@ interface GameStore {
 
 const uuid = () => crypto.randomUUID();
 
+/** Actions read-modify-write the game, so they must never overlap (fast double taps). */
+let queue: Promise<unknown> = Promise.resolve();
+const serial =
+  <A extends unknown[], R>(fn: (...a: A) => Promise<R>) =>
+  (...a: A): Promise<R> => {
+    const run = queue.then(() => fn(...a));
+    queue = run.catch(() => undefined);
+    return run;
+  };
+const SERIAL_ACTIONS = [
+  'startTurn',
+  'addStep',
+  'undoStep',
+  'hotDice',
+  'recordTurn',
+  'undoLastTurn',
+  'editTurn',
+  'pauseTimer',
+  'resumeTimer',
+  'endGameNow',
+  'attachLocation'
+] as const;
+
 export const useGame = create<GameStore>((set, get) => {
   /** Writes through to storage before the UI sees the new state (FR-800). */
   async function commit(next: Game, turns?: Turn[], write?: () => Promise<void>): Promise<boolean> {
@@ -69,7 +92,10 @@ export const useGame = create<GameStore>((set, get) => {
       set({ game: stamped, ...(turns ? { turns } : {}), error: undefined });
       return true;
     } catch (e) {
-      set({ game: prev, error: { message: e instanceof Error ? e.message : 'storage', retry: () => commit(next, turns, write).then(() => undefined) } });
+      set({
+        game: prev,
+        error: { message: e instanceof Error ? e.message : 'storage', retry: () => commit(next, turns, write).then(() => undefined) }
+      });
       return false;
     }
   }
@@ -86,7 +112,7 @@ export const useGame = create<GameStore>((set, get) => {
       ? { ...g, timer: { elapsedMs: g.timer.elapsedMs + (now - (g.timer.lastResumeAt ?? now)), running: false } }
       : g;
 
-  return {
+  const actions: GameStore = {
     ready: false,
     turns: [],
     clearError: () => set({ error: undefined }),
@@ -110,7 +136,11 @@ export const useGame = create<GameStore>((set, get) => {
         const known = recent.find((r) => r.name.toLowerCase() === p.name.trim().toLowerCase());
         return { playerId: known?.id ?? uuid(), name: p.name.trim(), colour: p.colour, seat };
       });
-      const core = newCore(players.map((p) => ({ id: p.playerId, name: p.name })), input.rules, input.end);
+      const core = newCore(
+        players.map((p) => ({ id: p.playerId, name: p.name })),
+        input.rules,
+        input.end
+      );
       const game: Game = {
         id: uuid(),
         name: input.name.trim(),
@@ -136,7 +166,9 @@ export const useGame = create<GameStore>((set, get) => {
       if (old && old.status !== 'archived') await repo.forgetGame(old.id);
       await repo.saveGame(game);
       for (const p of players) await repo.upsertPlayer({ id: p.playerId, name: p.name, colour: p.colour, lastUsedAt: now });
-      await useSettings.getState().update({ lastEndCondition: input.end, lastPlayerIds: players.map((p) => p.playerId), defaultPresetId: input.rules.id });
+      await useSettings
+        .getState()
+        .update({ lastEndCondition: input.end, lastPlayerIds: players.map((p) => p.playerId), defaultPresetId: input.rules.id });
       set({ game, turns: [], error: undefined });
     },
 
@@ -186,7 +218,15 @@ export const useGame = create<GameStore>((set, get) => {
       const core = coreOf(g);
       const res = applyTurn(core, { playerId: at.playerId, kind, total }, { timeUp: expired });
       const turn = turnFromOutcome(
-        { id: uuid(), gameId: g.id, startedAt: at.startedAt, endedAt: now, steps: at.turn.steps, hotDiceCount: at.turn.hotDiceCount, timeUp: expired || undefined },
+        {
+          id: uuid(),
+          gameId: g.id,
+          startedAt: at.startedAt,
+          endedAt: now,
+          steps: at.turn.steps,
+          hotDiceCount: at.turn.hotDiceCount,
+          timeUp: expired || undefined
+        },
         res.outcome
       );
       let next = withCore(g, res.core);
@@ -206,9 +246,18 @@ export const useGame = create<GameStore>((set, get) => {
       if (!g || turns.length === 0 || g.status === 'archived') return;
       const last = turns[turns.length - 1];
       const rest = turns.slice(0, -1);
-      const { core } = replay(baseCoreOf(g), rest.map((t) => ({ input: { playerId: t.playerId, kind: t.result, total: t.result === 'banked' ? t.turnTotal : t.lostTotal }, timeUp: t.timeUp })));
+      const { core } = replay(
+        baseCoreOf(g),
+        rest.map((t) => ({
+          input: { playerId: t.playerId, kind: t.result, total: t.result === 'banked' ? t.turnTotal : t.lostTotal },
+          timeUp: t.timeUp
+        }))
+      );
       let next: Game = { ...withCore(g, core), endedAt: undefined, result: undefined };
-      next = { ...next, timer: next.timer && !next.timer.running ? { ...next.timer, running: true, lastResumeAt: Date.now() } : next.timer };
+      next = {
+        ...next,
+        timer: next.timer && !next.timer.running ? { ...next.timer, running: true, lastResumeAt: Date.now() } : next.timer
+      };
       next.activeTurn = { playerId: last.playerId, turn: rebuildTurn(last.steps, next), startedAt: last.startedAt, started: true };
       await commit(next, rest, () => repo.replaceTurns(next, rest));
     },
@@ -224,15 +273,37 @@ export const useGame = create<GameStore>((set, get) => {
               result,
               turnTotal: result === 'banked' ? total : 0,
               lostTotal: result === 'bust' ? total : 0,
-              edited: [...(t.edited ?? []), { at: Date.now(), previousTotal: t.result === 'banked' ? t.turnTotal : t.lostTotal, previousResult: t.result }]
+              edited: [
+                ...(t.edited ?? []),
+                { at: Date.now(), previousTotal: t.result === 'banked' ? t.turnTotal : t.lostTotal, previousResult: t.result }
+              ]
             }
           : t
       );
-      const { core, outcomes } = replay(baseCoreOf(g), edited.map((t) => ({ input: { playerId: t.playerId, kind: t.result, total: t.result === 'banked' ? t.turnTotal : t.lostTotal }, timeUp: t.timeUp })));
-      const fixed = edited.map((t, i) => ({ ...t, round: outcomes[i].round, index: outcomes[i].index, penalty: outcomes[i].penalty, scoreBefore: outcomes[i].scoreBefore, scoreAfter: outcomes[i].scoreAfter, inFinalRound: outcomes[i].inFinalRound }));
+      const { core, outcomes } = replay(
+        baseCoreOf(g),
+        edited.map((t) => ({
+          input: { playerId: t.playerId, kind: t.result, total: t.result === 'banked' ? t.turnTotal : t.lostTotal },
+          timeUp: t.timeUp
+        }))
+      );
+      const fixed = edited.map((t, i) => ({
+        ...t,
+        round: outcomes[i].round,
+        index: outcomes[i].index,
+        penalty: outcomes[i].penalty,
+        scoreBefore: outcomes[i].scoreBefore,
+        scoreAfter: outcomes[i].scoreAfter,
+        inFinalRound: outcomes[i].inFinalRound
+      }));
       let next = withCore(g, core);
       if (isFinished(core)) next = { ...next, result: resultOf(core, fixed), activeTurn: undefined };
-      else next = { ...next, result: undefined, activeTurn: g.activeTurn && g.activeTurn.playerId === core.players[core.currentIndex].id ? g.activeTurn : freshActive(next) };
+      else
+        next = {
+          ...next,
+          result: undefined,
+          activeTurn: g.activeTurn && g.activeTurn.playerId === core.players[core.currentIndex].id ? g.activeTurn : freshActive(next)
+        };
       await commit(next, fixed, () => repo.replaceTurns(next, fixed));
     },
 
@@ -298,6 +369,11 @@ export const useGame = create<GameStore>((set, get) => {
       set({ game: undefined, turns: [] });
     }
   };
+  for (const name of SERIAL_ACTIONS) {
+    const original = actions[name] as (...a: never[]) => Promise<unknown>;
+    (actions as unknown as Record<string, unknown>)[name] = serial(original as (...a: unknown[]) => Promise<unknown>);
+  }
+  return actions;
 });
 
 export { currentPlayer };

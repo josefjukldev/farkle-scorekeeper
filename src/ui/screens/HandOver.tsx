@@ -32,20 +32,36 @@ export function HandOver() {
   return (
     <div className="screen">
       <header className="app-head between">
-        <span className="eyebrow">{t('turn.round', { n: game.round })} · {game.name}</span>
-        <a className="icon-btn" href="#/board" aria-label={t('board.title')}>≡</a>
+        <span className="eyebrow">
+          {t('turn.round', { n: game.round })} · {game.name}
+        </span>
+        <a className="icon-btn" href="#/board" aria-label={t('board.title')}>
+          ≡
+        </a>
       </header>
       <main className="content center">
         {last && lastP && (
           <div className="card row gap last-turn">
             <PlayerBadge name={lastP.name} seat={lastP.seat} size={36} />
             <span className="col">
-              <strong>{last.result === 'banked' ? t('hand.banked', { name: lastP.name, n: f.n(last.turnTotal) }) : last.result === 'bust' ? t('hand.busted', { name: lastP.name }) : t('hand.discarded', { name: lastP.name })}</strong>
-              <small className="muted">{f.n(last.scoreBefore)} → {f.n(last.scoreAfter)}</small>
+              <strong>
+                {last.result === 'banked'
+                  ? t('hand.banked', { name: lastP.name, n: f.n(last.turnTotal) })
+                  : last.result === 'bust'
+                    ? t('hand.busted', { name: lastP.name })
+                    : t('hand.discarded', { name: lastP.name })}
+              </strong>
+              <small className="muted">
+                {f.n(last.scoreBefore)} → {f.n(last.scoreAfter)}
+              </small>
             </span>
           </div>
         )}
-        {inFinal && <div className="banner banner-warn" role="status">{t('turn.finalBanner', { n: f.n(Math.max(...Object.values(game.scores))) })}</div>}
+        {inFinal && (
+          <div className="banner banner-warn" role="status">
+            {t('turn.finalBanner', { n: f.n(Math.max(...Object.values(game.scores))) })}
+          </div>
+        )}
         <div className="handover">
           <span className="eyebrow">{t('hand.next')}</span>
           <PlayerBadge name={p.name} seat={p.seat} size={112} />
@@ -57,9 +73,29 @@ export function HandOver() {
         </div>
       </main>
       <div className="action-bar single col">
-        <button type="button" className="btn btn-primary huge-btn" onClick={async () => { await startTurn(); navigate('turn'); }}>{t('hand.start')}</button>
+        <button
+          type="button"
+          className="btn btn-primary huge-btn"
+          onClick={async () => {
+            await startTurn();
+            navigate('turn');
+          }}
+        >
+          {t('hand.start')}
+        </button>
         <small className="muted center-text">{t('hand.pass', { name: p.name })}</small>
-        {last && <button type="button" className="link-btn" onClick={async () => { await undoLast(); navigate('turn'); }}>{t('hand.undoLast')}</button>}
+        {last && (
+          <button
+            type="button"
+            className="link-btn"
+            onClick={async () => {
+              await undoLast();
+              navigate('turn');
+            }}
+          >
+            {t('hand.undoLast')}
+          </button>
+        )}
       </div>
     </div>
   );

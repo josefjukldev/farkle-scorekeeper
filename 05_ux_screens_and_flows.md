@@ -73,35 +73,24 @@ Location         [x] Save location  (Altea) [edit label]
 ```
 
 ### S5 Turn Entry (core)
+Everything fits one screen without scrolling (see section 7, fit rule).
 ```
 ┌───────────────────────────────┐
-│ ● Pavel          Round 3   ≡  │
-│ Score 2 350   · to target 7 650│
-│ ⏱ 18:42 (time mode)           │
-├───────────────────────────────┤
-│ Turn total        450         │  big
-│ Dice left: 3   [●●● ○○○]      │
-│ Bank needs 350 ✓ · ≤2 dice ✗ │
-├───────────────────────────────┤
-│ Steps: 100 · 50 · 300  (undo) │
-├───────────────────────────────┤
-│ Quick picks                   │
-│ [1 +100][5 +50][1+5 +150]     │
-│ [2×1 +200][2×5 +100]          │
-│ [3×2][3×3][3×4][3×5][3×6][3×1]│
-│ [4×1 +2000][Straight +1000]   │
-│ [Dice picker] [Manual…]       │
-├───────────────────────────────┤
-│ [ BUST ]  [ ROLL AGAIN ] [BANK]│
+│ ● Pavel  Round 3      Score  ≡│
+│          to target 7 650 2 350│
+│ TURN TOTAL            Dice left: 3│
+│ 450                   ▢▢▢▢▢▢  │
+│ [3×4 +400] [1 +100]           │
+│ [ Manual | Quick picks ] [Undo]│
+│ [   350        multiple of 50 ] [Add step]│
+│ Dice [?][1][2][3][4][5][6]    │
+│ [1][2][3][⌫]                  │
+│ [4][5][6][00]                 │
+│ [7][8][9][0]                  │
+│ [ BUST ] [ BANK +450 / reason ]│
 └───────────────────────────────┘
 ```
-Behaviour: tapping a quick pick adds a step immediately (with haptic tick); "Roll again" is only a visual confirmation that the player continues, and is enabled after at least one step; Bank is disabled/greyed with a hint if below the minimum or if the bank window is closed ("Bank needs 2 or fewer dice left, or hot dice"). After hot dice the bar shows [BANK] and [THROW ALL 6].
-
-### Dice picker (bottom sheet)
-Six rows (faces 1–6), each with `−  n  +` stepper and the live computed points; footer shows "Dice used 4/6 · +350", invalid selections show a red reason ("Die 2 does not score"), and an "Add" button.
-
-### Manual entry (bottom sheet)
-Numeric keypad, quick increments (+50, +100), checks multiples of 50, optional "dice used" selector (unknown default).
+Behaviour: **Manual** is the default view; **Quick picks** (4-column grid generated from the rule set) is the alternative and is remembered until the app is closed. Adding a step is one tap in Quick picks, or number + Add step in Manual. The Bank button shows why it is disabled ("5 points missing", "Needs 2 or fewer dice", "Add points first"). There is no dice picker and no separate Roll again button.
 
 ### S6 Turn Confirm
 ```
@@ -152,6 +141,8 @@ Tabs: **Overview** (ranking + awards + headline), **Players** (style labels, sta
 | 480–900 px | Centred column max 560 px |
 | > 900 px | Two panes on S5 (entry left, scoreboard right) and on S10 (list left, detail right) |
 Safe-area insets respected (notch). Landscape on phones: scoreboard collapses into a top strip, quick picks in two columns.
+
+**Fit rule (owner requirement).** The primary game screens (Home, New game, Hand-over, Turn entry, Confirm, Scoreboard, Final results) must be fully usable without scrolling in Chrome on iPhone. The visible viewport there is about 375-430 px wide and 540-780 px tall once the browser toolbars are counted. Rules: screens are fixed to `100dvh` with the action bar at the bottom; controls scale with the viewport height (44 px minimum on the smallest phones, up to 52-68 px); secondary text is hidden on screens shorter than 600 px; New game is split into two steps (players, then game settings). Lists that can grow (history, archive, settings, rules editor, more than about 6 players) scroll inside their own area, never the whole page. Covered by `tests/e2e/fit.spec.ts` at 375x540, 375x640, 390x680 and 430x780.
 
 ## 8. Accessibility
 - All buttons have text labels or `aria-label`; sheets trap focus; Esc closes.

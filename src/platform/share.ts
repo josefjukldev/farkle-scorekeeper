@@ -2,7 +2,12 @@ export async function sharePng(blob: Blob, filename: string, title: string): Pro
   const file = new File([blob], filename, { type: 'image/png' });
   const nav = navigator as Navigator & { canShare?: (d: ShareData) => boolean };
   if (nav.share && nav.canShare?.({ files: [file] })) {
-    try { await nav.share({ files: [file], title, text: title }); return 'shared'; } catch { return 'cancelled'; }
+    try {
+      await nav.share({ files: [file], title, text: title });
+      return 'shared';
+    } catch {
+      return 'cancelled';
+    }
   }
   return 'unsupported';
 }
@@ -20,5 +25,7 @@ export async function copyPng(blob: Blob): Promise<boolean> {
   try {
     await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
     return true;
-  } catch { return false; }
+  } catch {
+    return false;
+  }
 }

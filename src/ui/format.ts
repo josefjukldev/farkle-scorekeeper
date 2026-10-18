@@ -8,7 +8,7 @@ export function useFmt() {
   const df = new Intl.DateTimeFormat(locale(lang), { day: 'numeric', month: 'short', year: 'numeric' });
   const tf = new Intl.DateTimeFormat(locale(lang), { hour: '2-digit', minute: '2-digit' });
   return {
-    n: (v: number) => nf.format(v).replace(/ /g, ' '),
+    n: (v: number) => nf.format(v).replace(/\u00a0/g, '\u2009'),
     date: (ms: number) => df.format(ms),
     time: (ms: number) => tf.format(ms)
   };

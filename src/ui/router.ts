@@ -1,6 +1,10 @@
 import { useEffect, useState } from 'react';
 
-export interface Route { name: string; arg?: string; sub?: string }
+export interface Route {
+  name: string;
+  arg?: string;
+  sub?: string;
+}
 
 export function parseHash(hash: string): Route {
   const parts = hash.replace(/^#\/?/, '').split('/').filter(Boolean);

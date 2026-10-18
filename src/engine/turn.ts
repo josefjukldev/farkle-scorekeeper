@@ -61,7 +61,14 @@ export function addStep(s: TurnState, step: Step, r: RuleSet): Result<TurnState>
   }
   return {
     ok: true,
-    value: { steps: [...s.steps, step], history: [...s.history, { snap: snap(s), kind: 'step' }], diceRemaining, diceKnown, hotDicePending, hotDiceCount }
+    value: {
+      steps: [...s.steps, step],
+      history: [...s.history, { snap: snap(s), kind: 'step' }],
+      diceRemaining,
+      diceKnown,
+      hotDicePending,
+      hotDiceCount
+    }
   };
 }
 

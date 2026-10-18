@@ -27,12 +27,7 @@ export function validateEnd(end: EndCondition, r: RuleSet): string[] {
 }
 
 export function validateManualStep(points: number, r: RuleSet): boolean {
-  return (
-    Number.isInteger(points) &&
-    points >= r.allowManualMultiplesOf &&
-    points <= r.manualMax &&
-    points % r.allowManualMultiplesOf === 0
-  );
+  return Number.isInteger(points) && points >= r.allowManualMultiplesOf && points <= r.manualMax && points % r.allowManualMultiplesOf === 0;
 }
 
 export function validatePlayerNames(names: string[]): string[] {
