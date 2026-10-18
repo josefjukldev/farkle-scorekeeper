@@ -48,6 +48,8 @@ test('crash recovery: half-entered turn survives a reload', async ({ page }) => 
   await quick(page);
   await page.getByRole('button', { name: /^3×4/ }).click();
   await page.getByRole('button', { name: /^1\s*\+100/ }).click();
+  // the screen only updates after the write to storage finished, so wait for it before pulling the plug
+  await expect(page.locator('.turn-total')).toHaveText('500');
   await page.reload();
   await expect(page.getByText('Ann').first()).toBeVisible();
   await expect(page.locator('.turn-total')).toHaveText('500');

@@ -12,8 +12,8 @@ Legend: [x] done and covered by an automated test or check, [~] done in the prot
 - [~] M6 Settings, i18n, backup, PWA, accessibility (see gaps)
 
 ## Quality checks run on this prototype
-- Unit tests: 103 passing (engine, review, storage, backup, store, i18n keys and plurals).
-- E2E (Playwright, Pixel 5 profile): 22 passing, including no-scroll fit checks at four iPhone Chrome viewports, including crash recovery, offline, time mode, backup round trip, share (1080x1350 PNG, `navigator.share` mocked and fallback), location granted and denied.
+- Unit tests: 106 passing (engine, review, storage, backup, store, i18n keys and plurals).
+- E2E (Playwright, Pixel 5 profile): 24 passing, including no-scroll fit checks at four iPhone Chrome viewports, including crash recovery, offline, time mode, backup round trip, share (1080x1350 PNG, `navigator.share` mocked and fallback), location granted and denied.
 - axe (WCAG 2.1 A/AA) scans of 14 screens and sheets in light and dark: no violations.
 - Lighthouse (mobile, local preview): performance 98, accessibility 100, best practices 96. Installability is covered by the manifest and service worker, not by Lighthouse 12 (no PWA category).
 - First load: 449 KB JS, 139 KB gzipped.
@@ -42,12 +42,12 @@ Legend: [x] done and covered by an automated test or check, [~] done in the prot
 - [x] FR-600 review with awards and a style per player
 - [x] FR-601..603 list, search, player and date filter, detail, rename, delete
 - [x] FR-604, FR-707 share image, place label off by default
-- [ ] FR-605 cross-game player statistics (could)
+- [x] FR-605 cross-game player statistics (Archive > Player stats; unit and e2e tested)
 ### Platform
 - [x] FR-700, FR-701 persistence, persistent storage requested
 - [x] FR-702 export and import with preview, never overwrites
 - [x] FR-704 installable, offline after the first load
-- [~] FR-705 responsive: single column up to 560 px, centred above; the two-pane desktop layout is not built
+- [x] FR-705 responsive: phone column up to 560 px; from 900 px the turn screens get a live standings panel beside them (the archive keeps a single column)
 - [x] FR-706 accessibility (axe clean; touch targets 48 px)
 - [x] FR-800..802 storage error banner with retry and export, error boundary
 
@@ -59,7 +59,7 @@ Legend: [x] done and covered by an automated test or check, [~] done in the prot
 - Trade-off to know: in Manual entry the dice count is optional. When it is left as "?", the app cannot enforce the "2 or fewer dice left" bank rule for that step (it treats the bank window as open).
 
 ## Deviations from the design package (all deliberate)
-- **Styling:** plain CSS with variables (`src/styles.css`) instead of Tailwind. No ESLint or Prettier yet.
+- **Styling:** plain CSS with variables (`src/styles.css`) instead of Tailwind. ESLint (with the engine-purity rule) and Prettier are set up: `npm run lint`, `npm run format`.
 - **RuleSet:** `endMode` and `targetScore` are not in `RuleSet`. The game's `endCondition` is the single source. Added `manualMax` and `bankRestriction` (replaces `twoDiceRule`).
 - **Share image:** drawn on a canvas instead of `html-to-image` (one dependency fewer).
 - **Review text:** the review stores locale-free data (style keys, variant numbers, parameters); wording is rendered from the i18n files, so switching language also changes old reviews. Template variants are chosen by a seeded hash of the game id.
@@ -70,8 +70,7 @@ Legend: [x] done and covered by an automated test or check, [~] done in the prot
 
 ## Open items and ideas
 - Coverage measurement for engine and review (target 95 %).
-- Two-pane layouts for tablet and desktop (FR-705).
-- Cross-game player statistics page (FR-605).
+- Archive/detail two-pane layout on desktop.
 - Replace the mock icon with a designed logo.
 - Run Lighthouse and the e2e suite in CI on every pull request (workflow added, not yet run on GitHub).
 
@@ -84,3 +83,8 @@ Legend: [x] done and covered by an automated test or check, [~] done in the prot
 
 ## Bug found and fixed in change round 2
 - Fast double taps could lose a step: store actions read the game, then wrote it back asynchronously. Actions now run one after another (`serial` queue in `src/state/gameStore.ts`), covered by `tests/unit/store.test.ts`.
+
+## Final polish round
+- ESLint 9 + typescript-eslint + react-hooks rules and Prettier added; the codebase is lint-clean and formatted. TypeScript pinned to 5.9 (typescript-eslint does not support 7 yet).
+- Player statistics page, wide-screen standings panel, resume-once logic moved from sessionStorage to a ref.
+- Fit tests now wait for each screen before measuring; that exposed a real overflow on the hand-over screen at 375x640, fixed.

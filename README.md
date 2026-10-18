@@ -10,7 +10,9 @@ npm install
 npm run dev          # http://localhost:5173
 npm test             # unit tests: engine, review, storage, backup, i18n
 npm run test:e2e     # Playwright on a Pixel 5 profile (builds and previews the app)
+npm run lint         # ESLint (the engine may not import UI, storage or browser APIs)
 npm run build        # type-check + production build into dist/
+npm run package      # build + zip for static hosts (deploy/dices-with-friends-static.zip)
 npm run preview      # serve dist/
 ```
 In a restricted environment point Playwright at an installed Chromium with `CHROMIUM_PATH=/path/to/chrome npm run test:e2e`.

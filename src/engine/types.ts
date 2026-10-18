@@ -30,9 +30,7 @@ export interface RuleSet {
 
 export type EndCondition = { type: 'target'; targetScore: number } | { type: 'time'; limitMs: number };
 
-export type ScoreResult =
-  | { valid: true; points: number; diceUsed: number }
-  | { valid: false; reason: string };
+export type ScoreResult = { valid: true; points: number; diceUsed: number } | { valid: false; reason: string };
 
 export type StepSource = 'quick' | 'dice' | 'manual';
 

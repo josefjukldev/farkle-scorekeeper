@@ -15,7 +15,12 @@ export function Archive() {
   const [to, setTo] = useState('');
   const [loaded, setLoaded] = useState(false);
 
-  useEffect(() => { listArchive().then((g) => { setAll(g); setLoaded(true); }); }, []);
+  useEffect(() => {
+    listArchive().then((g) => {
+      setAll(g);
+      setLoaded(true);
+    });
+  }, []);
   const names = [...new Set(all.flatMap((g) => g.players.map((p) => p.name)))].sort();
   const term = q.trim().toLowerCase();
   const fromMs = from ? new Date(from).getTime() : 0;
@@ -27,17 +32,36 @@ export function Archive() {
 
   return (
     <div className="screen">
-      <header className="app-head"><h1>{t('nav.archive')}</h1></header>
+      <header className="app-head">
+        <h1 className="grow">{t('nav.archive')}</h1>
+        <a href="#/stats" className="btn btn-outline small-btn">
+          {t('stats.open')}
+        </a>
+      </header>
       <main className="content">
-        <label className="field"><span className="sr-only">{t('archive.search')}</span>
-          <input type="search" placeholder={t('archive.search')} value={q} onChange={(e) => setQ(e.target.value)} /></label>
+        <label className="field">
+          <span className="sr-only">{t('archive.search')}</span>
+          <input type="search" placeholder={t('archive.search')} value={q} onChange={(e) => setQ(e.target.value)} />
+        </label>
         <div className="row gap wrap" role="group" aria-label={t('archive.filter')}>
-          <button type="button" className={'chip' + (!who ? ' on' : '')} aria-pressed={!who} onClick={() => setWho('')}>{t('archive.all')}</button>
-          {names.map((n) => <button key={n} type="button" className={'chip' + (who === n ? ' on' : '')} aria-pressed={who === n} onClick={() => setWho(n)}>{n}</button>)}
+          <button type="button" className={'chip' + (!who ? ' on' : '')} aria-pressed={!who} onClick={() => setWho('')}>
+            {t('archive.all')}
+          </button>
+          {names.map((n) => (
+            <button key={n} type="button" className={'chip' + (who === n ? ' on' : '')} aria-pressed={who === n} onClick={() => setWho(n)}>
+              {n}
+            </button>
+          ))}
         </div>
         <div className="row gap">
-          <label className="field grow"><span className="muted small">{t('archive.from')}</span><input type="date" value={from} onChange={(e) => setFrom(e.target.value)} /></label>
-          <label className="field grow"><span className="muted small">{t('archive.to')}</span><input type="date" value={to} onChange={(e) => setTo(e.target.value)} /></label>
+          <label className="field grow">
+            <span className="muted small">{t('archive.from')}</span>
+            <input type="date" value={from} onChange={(e) => setFrom(e.target.value)} />
+          </label>
+          <label className="field grow">
+            <span className="muted small">{t('archive.to')}</span>
+            <input type="date" value={to} onChange={(e) => setTo(e.target.value)} />
+          </label>
         </div>
         <div className="list">
           {loaded && all.length === 0 && <p className="muted center-text">{t('archive.empty')}</p>}
@@ -49,12 +73,24 @@ export function Archive() {
                 {w && <PlayerBadge name={w.name} seat={w.seat} size={44} />}
                 <span className="grow col">
                   <strong>{g.name}</strong>
-                  <small className="muted">{f.date(g.createdAt)}{g.placeLabel ? ` · ${g.placeLabel}` : ''}</small>
+                  <small className="muted">
+                    {f.date(g.createdAt)}
+                    {g.placeLabel ? ` · ${g.placeLabel}` : ''}
+                  </small>
                   <small className="muted">{g.players.map((p) => p.name).join(', ')}</small>
                 </span>
                 <span className="col right">
-                  {w && <><small className="muted">{t('home.winner')}</small><strong>{w.name}</strong></>}
-                  <small className="chip-sm">{g.endCondition.type === 'target' ? f.n(g.endCondition.targetScore) : `${Math.round(g.endCondition.limitMs / 60000)} min`}</small>
+                  {w && (
+                    <>
+                      <small className="muted">{t('home.winner')}</small>
+                      <strong>{w.name}</strong>
+                    </>
+                  )}
+                  <small className="chip-sm">
+                    {g.endCondition.type === 'target'
+                      ? f.n(g.endCondition.targetScore)
+                      : `${Math.round(g.endCondition.limitMs / 60000)} min`}
+                  </small>
                 </span>
               </a>
             );

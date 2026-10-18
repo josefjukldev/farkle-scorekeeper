@@ -22,7 +22,11 @@ export function buildGame(
   const rules = opts.rules ?? HOUSE_RULES;
   const end = opts.end ?? { type: 'target', targetScore: 10000 };
   const players = names.map((name, seat) => ({ playerId: `p${seat}`, name, colour: '#000', seat }));
-  let core = newGame(players.map((p) => ({ id: p.playerId, name: p.name })), rules, end);
+  let core = newGame(
+    players.map((p) => ({ id: p.playerId, name: p.name })),
+    rules,
+    end
+  );
   const turns: Turn[] = [];
   let t = 1000;
   for (const s of specs) {
@@ -32,8 +36,19 @@ export function buildGame(
     const res = applyTurn(core, { playerId: `p${s.p}`, kind, total: s.total });
     core = res.core;
     const stepCount = s.steps ?? 2;
-    const steps: Step[] = Array.from({ length: stepCount }, (_, i) => ({ id: `s${turns.length}-${i}`, points: Math.max(50, Math.round(s.total / stepCount)), source: 'quick', diceUsed: 1, at: t }));
-    turns.push(turnFromOutcome({ id: `t${turns.length}`, gameId: opts.id ?? 'g1', startedAt: t, endedAt: t + 30000, steps, hotDiceCount: s.hot ?? 0 }, res.outcome));
+    const steps: Step[] = Array.from({ length: stepCount }, (_, i) => ({
+      id: `s${turns.length}-${i}`,
+      points: Math.max(50, Math.round(s.total / stepCount)),
+      source: 'quick',
+      diceUsed: 1,
+      at: t
+    }));
+    turns.push(
+      turnFromOutcome(
+        { id: `t${turns.length}`, gameId: opts.id ?? 'g1', startedAt: t, endedAt: t + 30000, steps, hotDiceCount: s.hot ?? 0 },
+        res.outcome
+      )
+    );
     t += 60000;
   }
   if (opts.finish !== false && core.status !== 'finishedPending') core = endNow(core);

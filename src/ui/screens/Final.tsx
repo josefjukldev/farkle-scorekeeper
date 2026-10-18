@@ -41,7 +41,9 @@ export function Final() {
               <PlayerBadge name={name(r.playerId).name} seat={name(r.playerId).seat} size={36} />
               <strong>{name(r.playerId).name}</strong>
               <span className="muted small">{f.n(r.score)}</span>
-              <div className={'podium-bar r' + Math.min(r.rank, 3)} style={{ height: r.rank === 1 ? 64 : r.rank === 2 ? 48 : 36 }}>{rankLabel(r.rank, tieOf(r.rank))}</div>
+              <div className={'podium-bar r' + Math.min(r.rank, 3)} style={{ height: r.rank === 1 ? 64 : r.rank === 2 ? 48 : 36 }}>
+                {rankLabel(r.rank, tieOf(r.rank))}
+              </div>
             </div>
           ))}
         </div>
@@ -50,20 +52,52 @@ export function Final() {
             <div key={r.playerId} className="row gap rank-row">
               <strong className="rank">{rankLabel(r.rank, tieOf(r.rank))}</strong>
               <PlayerBadge name={name(r.playerId).name} seat={name(r.playerId).seat} size={30} />
-              <span className="grow col"><strong>{name(r.playerId).name}</strong><small className="muted">{t('final.line', { t: r.turns, b: r.busts, best: f.n(r.bestTurn) })}</small></span>
+              <span className="grow col">
+                <strong>{name(r.playerId).name}</strong>
+                <small className="muted">{t('final.line', { t: r.turns, b: r.busts, best: f.n(r.bestTurn) })}</small>
+              </span>
               <strong className="score-sm">{f.n(r.score)}</strong>
             </div>
           ))}
         </div>
       </main>
       <div className="action-bar single col">
-        <button type="button" className="btn btn-primary big-btn" disabled={busy} onClick={async () => { setBusy(true); const id = await archive(); setBusy(false); if (id) navigate(`game/${id}`); }}>{t('final.archive')}</button>
+        <button
+          type="button"
+          className="btn btn-primary big-btn"
+          disabled={busy}
+          onClick={async () => {
+            setBusy(true);
+            const id = await archive();
+            setBusy(false);
+            if (id) navigate(`game/${id}`);
+          }}
+        >
+          {t('final.archive')}
+        </button>
         <div className="grid2">
-          <button type="button" className="btn btn-danger" onClick={() => setConfirm(true)}>{t('final.forget')}</button>
-          <a href="#/board" className="btn btn-outline">{t('final.logShort')}</a>
+          <button type="button" className="btn btn-danger" onClick={() => setConfirm(true)}>
+            {t('final.forget')}
+          </button>
+          <a href="#/board" className="btn btn-outline">
+            {t('final.logShort')}
+          </a>
         </div>
       </div>
-      {confirm && <ConfirmDialog title={t('final.forgetTitle')} body={t('final.forgetBody')} confirmLabel={t('final.forgetConfirm')} danger onCancel={() => setConfirm(false)} onConfirm={async () => { await forget(); setConfirm(false); navigate('', true); }} />}
+      {confirm && (
+        <ConfirmDialog
+          title={t('final.forgetTitle')}
+          body={t('final.forgetBody')}
+          confirmLabel={t('final.forgetConfirm')}
+          danger
+          onCancel={() => setConfirm(false)}
+          onConfirm={async () => {
+            await forget();
+            setConfirm(false);
+            navigate('', true);
+          }}
+        />
+      )}
     </div>
   );
 }

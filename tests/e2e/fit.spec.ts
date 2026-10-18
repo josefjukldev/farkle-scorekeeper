@@ -16,16 +16,24 @@ async function expectFits(page: Page, label: string) {
     const doc = document.documentElement;
     const content = document.querySelector('.screen > .content, .screen > .input-area') as HTMLElement | null;
     const screen = document.querySelector('.screen') as HTMLElement;
-    const overflowing = [...document.querySelectorAll<HTMLElement>('.screen *')].filter((e) => {
-      const r = e.getBoundingClientRect();
-      return r.width > 0 && (r.bottom > window.innerHeight + 1 || r.right > window.innerWidth + 1);
-    }).map((e) => e.className || e.tagName).slice(0, 5);
+    const overflowing = [...document.querySelectorAll<HTMLElement>('.screen *')]
+      .filter((e) => {
+        const r = e.getBoundingClientRect();
+        return r.width > 0 && (r.bottom > window.innerHeight + 1 || r.right > window.innerWidth + 1);
+      })
+      .map((e) => e.className || e.tagName)
+      .slice(0, 5);
     // clipped content: an element with hidden overflow whose content is taller than the element
-    const clipped = [...document.querySelectorAll<HTMLElement>('.screen *')].filter((e) => {
-      const o = getComputedStyle(e).overflowY;
-      return (o === 'hidden' || o === 'clip') && e.scrollHeight > e.clientHeight + 1 && e.clientHeight > 0;
-    }).map((e) => e.className || e.tagName).slice(0, 5);
-    const kids = content ? [...content.children].map((k) => `${k.className || k.tagName}:${Math.round(k.getBoundingClientRect().height)}`) : [];
+    const clipped = [...document.querySelectorAll<HTMLElement>('.screen *')]
+      .filter((e) => {
+        const o = getComputedStyle(e).overflowY;
+        return (o === 'hidden' || o === 'clip') && e.scrollHeight > e.clientHeight + 1 && e.clientHeight > 0;
+      })
+      .map((e) => e.className || e.tagName)
+      .slice(0, 5);
+    const kids = content
+      ? [...content.children].map((k) => `${k.className || k.tagName}:${Math.round(k.getBoundingClientRect().height)}`)
+      : [];
     return {
       kids,
       clipped,
@@ -75,14 +83,18 @@ for (const vp of VIEWPORTS) {
     await page.getByRole('button', { name: /^BUST/ }).click();
     await expectFits(page, 'confirm bust');
     await page.getByRole('button', { name: /Confirm & pass/ }).click();
+    await expect(page.getByRole('button', { name: 'Start turn' })).toBeVisible();
     await expectFits(page, 'hand-over after a turn');
-    await page.goto('/#/');
+    await page.evaluate(() => (location.hash = '#/'));
+    await expect(page.getByRole('button', { name: 'Resume game' })).toBeVisible();
     await expectFits(page, 'home with a game in progress');
     await page.screenshot({ path: `shots/fit-home-${vp.width}x${vp.height}.png` });
-    await page.goto('/#/board');
+    await page.evaluate(() => (location.hash = '#/board'));
+    await expect(page.getByRole('button', { name: 'End game now' })).toBeVisible();
     await expectFits(page, 'scoreboard (4 players)');
     await page.getByRole('button', { name: 'End game now' }).click();
     await page.getByRole('dialog').getByRole('button', { name: 'End game now' }).click();
+    await expect(page.getByRole('button', { name: 'Archive game' })).toBeVisible();
     await expectFits(page, 'final results (4 players)');
     await page.screenshot({ path: `shots/fit-final-${vp.width}x${vp.height}.png` });
   });

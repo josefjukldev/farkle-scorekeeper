@@ -26,13 +26,7 @@ export function classify(s: PlayerStats, playerCount: number): StyleKey {
   return 'balanced';
 }
 
-export function assess(
-  gameId: string,
-  playerId: string,
-  s: PlayerStats,
-  playerCount: number,
-  isBiggestHitter: boolean
-): PlayerAssessment {
+export function assess(gameId: string, playerId: string, s: PlayerStats, playerCount: number, isBiggestHitter: boolean): PlayerAssessment {
   const style = classify(s, playerCount);
   let tag: TagKey | undefined;
   if (isBiggestHitter && s.bestTurn > 0) tag = 'bigHitter';

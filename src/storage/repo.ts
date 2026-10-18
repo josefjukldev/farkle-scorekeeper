@@ -15,7 +15,10 @@ export async function getGame(id: string): Promise<Game | undefined> {
 }
 
 export async function getActiveGame(): Promise<Game | undefined> {
-  return db.games.where('status').anyOf([...ACTIVE]).first();
+  return db.games
+    .where('status')
+    .anyOf([...ACTIVE])
+    .first();
 }
 
 /** Persists a finished turn together with the updated game in one transaction. */
@@ -78,7 +81,7 @@ export async function upsertPlayer(p: Player): Promise<void> {
 }
 
 export async function listRecentPlayers(limit = 8): Promise<Player[]> {
-  return (await db.players.orderBy('lastUsedAt').reverse().limit(limit).toArray());
+  return await db.players.orderBy('lastUsedAt').reverse().limit(limit).toArray();
 }
 
 export async function getSettings(): Promise<Settings> {

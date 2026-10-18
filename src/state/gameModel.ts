@@ -20,7 +20,11 @@ export const coreOf = (g: Game): GameCore => ({
 });
 
 export const baseCoreOf = (g: Game): GameCore =>
-  newGame(g.players.map((p) => ({ id: p.playerId, name: p.name })), g.rules, g.endCondition);
+  newGame(
+    g.players.map((p) => ({ id: p.playerId, name: p.name })),
+    g.rules,
+    g.endCondition
+  );
 
 export const withCore = (g: Game, c: GameCore): Game => ({
   ...g,

@@ -6,7 +6,15 @@ export async function fresh(page: Page, lang: 'en' | 'cs' = 'en') {
   await page.evaluate(async () => {
     sessionStorage.clear();
     const dbs = await indexedDB.databases();
-    await Promise.all(dbs.map((d) => new Promise((r) => { const q = indexedDB.deleteDatabase(d.name!); q.onsuccess = q.onerror = q.onblocked = () => r(null); })));
+    await Promise.all(
+      dbs.map(
+        (d) =>
+          new Promise((r) => {
+            const q = indexedDB.deleteDatabase(d.name!);
+            q.onsuccess = q.onerror = q.onblocked = () => r(null);
+          })
+      )
+    );
   });
   await page.goto('/');
   if (lang === 'en') {

@@ -10,7 +10,15 @@ let n = 0;
 beforeEach(async () => {
   useDatabase(new FarkleDb('store-' + n++));
   useGame.setState({ game: undefined, turns: [], error: undefined });
-  await useGame.getState().createGame({ name: 'T', players: [{ name: 'Ann', colour: '#000' }, { name: 'Bob', colour: '#111' }], rules: HOUSE_RULES, end: { type: 'target', targetScore: 10000 } });
+  await useGame.getState().createGame({
+    name: 'T',
+    players: [
+      { name: 'Ann', colour: '#000' },
+      { name: 'Bob', colour: '#111' }
+    ],
+    rules: HOUSE_RULES,
+    end: { type: 'target', targetScore: 10000 }
+  });
   await useGame.getState().startTurn();
 });
 

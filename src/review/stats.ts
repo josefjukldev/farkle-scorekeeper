@@ -67,9 +67,7 @@ export function computeStats(game: Game, turns: Turn[]): { stats: Record<string,
       avgBankedAfterSteps: banked.length ? sum(banked.map((t) => t.steps.length)) / banked.length : 0,
       hotDice: sum(mine.map((t) => t.hotDiceCount)),
       bigTurns: banked.filter((t) => t.turnTotal >= T.streaker.bigTurn).length,
-      bankAtMinRate: banked.length
-        ? banked.filter((t) => t.turnTotal < game.rules.minBank + T.bankAtMinMargin).length / banked.length
-        : 0,
+      bankAtMinRate: banked.length ? banked.filter((t) => t.turnTotal < game.rules.minBank + T.bankAtMinMargin).length / banked.length : 0,
       longestBustStreak: longest(mine.map((t) => t.result === 'bust')),
       longestBankStreak: longest(mine.map((t) => t.result === 'banked')),
       lostToBusts: lost,

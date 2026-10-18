@@ -29,7 +29,10 @@ export function TurnEntry() {
   const [text, setText] = useState('');
   const [dice, setDice] = useState<number | undefined>(undefined);
   const picks = useMemo(() => (game ? quickPicks(game.rules) : []), [game?.rules]); // eslint-disable-line react-hooks/exhaustive-deps
-  const setMode = (m: Mode) => { lastMode = m; setModeState(m); };
+  const setMode = (m: Mode) => {
+    lastMode = m;
+    setModeState(m);
+  };
 
   useEffect(() => {
     if (!game) navigate('', true);
@@ -60,14 +63,21 @@ export function TurnEntry() {
   const key = (k: string) => setText((x) => (k === '⌫' ? x.slice(0, -1) : (x + k).replace(/^0+(?=\d)/, '').slice(0, 5)));
   const addManual = async () => {
     if (!manualOk) return;
-    if (await add({ points: value, source: 'manual', diceUsed: dice })) { setText(''); setDice(undefined); }
+    if (await add({ points: value, source: 'manual', diceUsed: dice })) {
+      setText('');
+      setDice(undefined);
+    }
   };
 
   const reason = !bank.canBank
-    ? turn.steps.length === 0 ? t('turn.bankEmpty')
-      : !bank.minOk ? t('turn.bankMissing', { n: bank.missing })
-      : t('turn.bankNeeds', { rule: t('turn.chipDice.' + game.rules.bankRestriction) })
-    : turn.hotDicePending ? t('turn.bankHot') : '';
+    ? turn.steps.length === 0
+      ? t('turn.bankEmpty')
+      : !bank.minOk
+        ? t('turn.bankMissing', { n: bank.missing })
+        : t('turn.bankNeeds', { rule: t('turn.chipDice.' + game.rules.bankRestriction) })
+    : turn.hotDicePending
+      ? t('turn.bankHot')
+      : '';
   const shown = turn.steps.slice(-3);
   const hidden = turn.steps.length - shown.length;
 
@@ -77,28 +87,56 @@ export function TurnEntry() {
         <PlayerBadge name={p.name} seat={p.seat} size={40} />
         <span className="who">
           <strong>{p.name}</strong>
-          <small>{t('turn.round', { n: game.round })}{left !== null ? ` · ${t('turn.toTarget', { n: f.n(left) })}` : ''}</small>
+          <small>
+            {t('turn.round', { n: game.round })}
+            {left !== null ? ` · ${t('turn.toTarget', { n: f.n(left) })}` : ''}
+          </small>
         </span>
         {left === null && <Timer game={game} controls={false} />}
-        <span className="score-box"><small>{t('turn.score')}</small><strong>{f.n(score)}</strong></span>
-        <button type="button" className="icon-btn" aria-label={t('turn.menu')} onClick={() => setSheet('menu')}>≡</button>
+        <span className="score-box">
+          <small>{t('turn.score')}</small>
+          <strong>{f.n(score)}</strong>
+        </span>
+        <button type="button" className="icon-btn" aria-label={t('turn.menu')} onClick={() => setSheet('menu')}>
+          ≡
+        </button>
       </header>
 
       {(inFinal || timeUp) && (
-        <div className="banner banner-warn" role="status">{timeUp ? t('turn.timeUp') : t('turn.finalBanner', { n: f.n(leader) })}</div>
+        <div className="banner banner-warn" role="status">
+          {timeUp ? t('turn.timeUp') : t('turn.finalBanner', { n: f.n(leader) })}
+        </div>
       )}
 
       <section className="turn-mid" aria-label={t('turn.total')}>
         <div className="col">
           <span className="eyebrow">{t('turn.total')}</span>
-          <strong className="turn-total" aria-live="polite" aria-label={t('turn.aria', { name: p.name, total: f.n(total), dice: turn.diceKnown ? turn.diceRemaining : '?' })}>{f.n(total)}</strong>
+          <strong
+            className="turn-total"
+            aria-live="polite"
+            aria-label={t('turn.aria', { name: p.name, total: f.n(total), dice: turn.diceKnown ? turn.diceRemaining : '?' })}
+          >
+            {f.n(total)}
+          </strong>
         </div>
         <div className="dice-box">
-          {turn.hotDicePending
-            ? <span className="hot-pill" role="status">🔥 {t('turn.hot')}</span>
-            : <strong>{t('turn.diceLeft', { n: turn.diceKnown ? turn.diceRemaining : '?' })}</strong>}
-          <span className="dice-dots" aria-hidden="true">{[0, 1, 2, 3, 4, 5].map((i) => <i key={i} className={turn.diceKnown && i < turn.diceRemaining ? 'on' : ''} />)}</span>
-          {!turn.diceKnown && game.rules.hotDice && <button type="button" className="chip hot-btn" onClick={hotDice}>🔥 {t('turn.forceHot')}</button>}
+          {turn.hotDicePending ? (
+            <span className="hot-pill" role="status">
+              🔥 {t('turn.hot')}
+            </span>
+          ) : (
+            <strong>{t('turn.diceLeft', { n: turn.diceKnown ? turn.diceRemaining : '?' })}</strong>
+          )}
+          <span className="dice-dots" aria-hidden="true">
+            {[0, 1, 2, 3, 4, 5].map((i) => (
+              <i key={i} className={turn.diceKnown && i < turn.diceRemaining ? 'on' : ''} />
+            ))}
+          </span>
+          {!turn.diceKnown && game.rules.hotDice && (
+            <button type="button" className="chip hot-btn" onClick={hotDice}>
+              🔥 {t('turn.forceHot')}
+            </button>
+          )}
         </div>
       </section>
 
@@ -106,13 +144,33 @@ export function TurnEntry() {
         <div className="chips" aria-label={t('turn.steps')}>
           {turn.steps.length === 0 && <span className="muted small">{t('turn.noSteps')}</span>}
           {hidden > 0 && <span className="step-chip muted">+{hidden}</span>}
-          {shown.map((s) => <span key={s.id} className="step-chip">{s.label ? <>{s.label} <small className="muted">+{f.n(s.points)}</small></> : <>+{f.n(s.points)}</>}</span>)}
+          {shown.map((s) => (
+            <span key={s.id} className="step-chip">
+              {s.label ? (
+                <>
+                  {s.label} <small className="muted">+{f.n(s.points)}</small>
+                </>
+              ) : (
+                <>+{f.n(s.points)}</>
+              )}
+            </span>
+          ))}
         </div>
       </div>
 
       <div className="mode-row">
-        <Segmented value={mode} label={t('turn.modeLabel')} options={[{ value: 'manual', label: t('turn.modeManual') }, { value: 'quick', label: t('turn.modeQuick') }]} onChange={setMode} />
-        <button type="button" className="btn btn-outline undo-btn" disabled={turn.history.length === 0} onClick={undoStep}>↶ {t('turn.undo')}</button>
+        <Segmented
+          value={mode}
+          label={t('turn.modeLabel')}
+          options={[
+            { value: 'manual', label: t('turn.modeManual') },
+            { value: 'quick', label: t('turn.modeQuick') }
+          ]}
+          onChange={setMode}
+        />
+        <button type="button" className="btn btn-outline undo-btn" disabled={turn.history.length === 0} onClick={undoStep}>
+          ↶ {t('turn.undo')}
+        </button>
       </div>
 
       <main className="input-area">
@@ -120,22 +178,53 @@ export function TurnEntry() {
           <>
             <div className="manual-top">
               <div className={'manual-display' + (manualBad ? ' bad' : '')}>
-                <output aria-live="polite" aria-label={t('manual.value')}>{value ? f.n(value) : '0'}</output>
+                <output aria-live="polite" aria-label={t('manual.value')}>
+                  {value ? f.n(value) : '0'}
+                </output>
                 <small role={manualBad ? 'alert' : undefined}>{t('manual.multipleOf', { m: game.rules.allowManualMultiplesOf })}</small>
               </div>
-              <button type="button" className="btn btn-primary" disabled={!manualOk} onClick={addManual}>{t('manual.add')}</button>
+              <button type="button" className="btn btn-primary" disabled={!manualOk} onClick={addManual}>
+                {t('manual.add')}
+              </button>
             </div>
             <div className="dice-used" role="group" aria-label={t('manual.dice')}>
               <span>{t('manual.diceShort')}</span>
-              <button type="button" className={'chip' + (dice === undefined ? ' on' : '')} aria-pressed={dice === undefined} aria-label={t('manual.unknown')} onClick={() => setDice(undefined)}>?</button>
+              <button
+                type="button"
+                className={'chip' + (dice === undefined ? ' on' : '')}
+                aria-pressed={dice === undefined}
+                aria-label={t('manual.unknown')}
+                onClick={() => setDice(undefined)}
+              >
+                ?
+              </button>
               {[1, 2, 3, 4, 5, 6].map((n) => {
                 const off = turn.diceKnown && n > turn.diceRemaining;
-                return <button key={n} type="button" disabled={off} className={'chip' + (dice === n ? ' on' : '')} aria-pressed={dice === n} onClick={() => setDice(n)}>{n}</button>;
+                return (
+                  <button
+                    key={n}
+                    type="button"
+                    disabled={off}
+                    className={'chip' + (dice === n ? ' on' : '')}
+                    aria-pressed={dice === n}
+                    onClick={() => setDice(n)}
+                  >
+                    {n}
+                  </button>
+                );
               })}
             </div>
             <div className="keypad4">
               {['1', '2', '3', '⌫', '4', '5', '6', '00', '7', '8', '9', '0'].map((k) => (
-                <button key={k} type="button" className={'key' + (k === '⌫' || k === '00' ? ' fn' : '')} aria-label={k === '⌫' ? t('manual.delete') : k} onClick={() => key(k)}>{k}</button>
+                <button
+                  key={k}
+                  type="button"
+                  className={'key' + (k === '⌫' || k === '00' ? ' fn' : '')}
+                  aria-label={k === '⌫' ? t('manual.delete') : k}
+                  onClick={() => key(k)}
+                >
+                  {k}
+                </button>
               ))}
             </div>
           </>
@@ -145,8 +234,15 @@ export function TurnEntry() {
               const off = turn.diceKnown && q.diceUsed > turn.diceRemaining;
               const label = q.key === 'straight' ? t('turn.straight') : q.label;
               return (
-                <button key={q.key} type="button" className="pick" disabled={off} onClick={() => add({ points: q.points, source: 'quick', counts: q.counts, diceUsed: q.diceUsed, label })}>
-                  <strong>{label}</strong><small>+{f.n(q.points)}</small>
+                <button
+                  key={q.key}
+                  type="button"
+                  className="pick"
+                  disabled={off}
+                  onClick={() => add({ points: q.points, source: 'quick', counts: q.counts, diceUsed: q.diceUsed, label })}
+                >
+                  <strong>{label}</strong>
+                  <small>+{f.n(q.points)}</small>
                 </button>
               );
             })}
@@ -155,7 +251,9 @@ export function TurnEntry() {
       </main>
 
       <div className="action-bar two">
-        <button type="button" className="btn btn-danger" onClick={() => navigate('confirm/bust')}>{t('turn.bust')}</button>
+        <button type="button" className="btn btn-danger" onClick={() => navigate('confirm/bust')}>
+          {t('turn.bust')}
+        </button>
         <button type="button" className="btn btn-primary bank-btn" disabled={!bank.canBank} onClick={() => navigate('confirm/bank')}>
           <span>{t('turn.bank', { n: f.n(total) })}</span>
           {reason && <small>{reason}</small>}
@@ -165,22 +263,42 @@ export function TurnEntry() {
       {sheet === 'menu' && (
         <Sheet title={t('turn.menu')} onClose={() => setSheet(null)}>
           <div className="stack">
-            <a className="btn btn-outline" href="#/board">{t('board.title')}</a>
-            <button type="button" className="btn btn-outline" onClick={() => setSheet('rules')}>{t('turn.rules')}</button>
-            <a className="btn btn-outline" href="#/">{t('turn.exit')}</a>
-            <button type="button" className="btn btn-danger" onClick={() => setSheet('end')}>{t('turn.endNow')}</button>
+            <a className="btn btn-outline" href="#/board">
+              {t('board.title')}
+            </a>
+            <button type="button" className="btn btn-outline" onClick={() => setSheet('rules')}>
+              {t('turn.rules')}
+            </button>
+            <a className="btn btn-outline" href="#/">
+              {t('turn.exit')}
+            </a>
+            <button type="button" className="btn btn-danger" onClick={() => setSheet('end')}>
+              {t('turn.endNow')}
+            </button>
           </div>
         </Sheet>
       )}
       {sheet === 'rules' && (
         <Sheet title={t('turn.rules')} onClose={() => setSheet(null)}>
-          <p className="body-text">{t('new.rulesSummary', { min: game.rules.minBank, dice: t('new.dice.' + game.rules.bankRestriction) })}</p>
+          <p className="body-text">
+            {t('new.rulesSummary', { min: game.rules.minBank, dice: t('new.dice.' + game.rules.bankRestriction) })}
+          </p>
           <p className="muted">{game.rules.name}</p>
         </Sheet>
       )}
       {sheet === 'end' && (
-        <ConfirmDialog title={t('turn.endTitle')} body={t('turn.endBody')} confirmLabel={t('turn.endNow')} danger onCancel={() => setSheet(null)}
-          onConfirm={async () => { setSheet(null); await endGameNow(); navigate('final'); }} />
+        <ConfirmDialog
+          title={t('turn.endTitle')}
+          body={t('turn.endBody')}
+          confirmLabel={t('turn.endNow')}
+          danger
+          onCancel={() => setSheet(null)}
+          onConfirm={async () => {
+            setSheet(null);
+            await endGameNow();
+            navigate('final');
+          }}
+        />
       )}
     </div>
   );

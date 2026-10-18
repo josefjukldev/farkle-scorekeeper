@@ -22,7 +22,8 @@ export function Timer({ game, controls = true }: { game: Game; controls?: boolea
   const label = rem <= 0 ? t('timer.up') : mmss(rem);
   return (
     <span className={'timer ' + cls} role="timer" aria-label={t('timer.label', { time: label })}>
-      <span aria-hidden="true">⏱</span> {label}{!game.timer.running && rem > 0 ? ` · ${t('timer.paused')}` : ''}
+      <span aria-hidden="true">⏱</span> {label}
+      {!game.timer.running && rem > 0 ? ` · ${t('timer.paused')}` : ''}
       {controls && rem > 0 && (
         <button type="button" className="mini-btn" onClick={() => (game.timer?.running ? pause() : resume())}>
           {game.timer.running ? t('timer.pause') : t('timer.resume')}
